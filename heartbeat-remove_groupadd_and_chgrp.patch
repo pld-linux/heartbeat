@@ -1,0 +1,46 @@
+--- heartbeat/Makefile.orig	Thu Apr  4 15:33:55 2002
++++ heartbeat/Makefile	Thu Apr  4 15:33:32 2002
+@@ -175,20 +175,20 @@
+ install: install_lib install_bin
+ 
+ install_bin: all
+-	SECGID=70
+-	if grep '^$(APIGROUP):' /etc/group >/dev/null; then : OK; 	\
+-	elif								\
+-          [ -x /usr/sbin/groupadd ];					\
+-        then								\
+-	  if /usr/sbin/groupadd -g $(APIGID) $(APIGROUP);		\
+-          then : Group $(APIGID) added successfully;			\
+-          else /usr/sbin/groupadd -g $(SECGID) $(APIGROUP);		\
+-          fi;								\
+-	elif								\
+-          [ -x /usr/sbin/pw  ];						\
+-        then								\
+-          /usr/sbin/pw group add $(APIGROUP);				\
+-        fi
++#	SECGID=70
++#	if grep '^$(APIGROUP):' /etc/group >/dev/null; then : OK; 	\
++#	elif								\
++#          [ -x /usr/sbin/groupadd ];					\
++#        then								\
++#	  if /usr/sbin/groupadd -g $(APIGID) $(APIGROUP);		\
++#          then : Group $(APIGID) added successfully;			\
++#          else /usr/sbin/groupadd -g $(SECGID) $(APIGROUP);		\
++#          fi;								\
++#	elif								\
++#          [ -x /usr/sbin/pw  ];						\
++#        then								\
++#          /usr/sbin/pw group add $(APIGROUP);				\
++#        fi
+ 	[ -d $(VARLIB) ]    || mkdir  -m 755 -p $(VARLIB)
+ 	fifo() { if [ ! -p $$2 ]; then mkfifo $$2; chmod $$1 $$2; fi;};	\
+         fifo 600 $(FIFO); fifo 620 $(APIREG)
+@@ -196,7 +196,7 @@
+ 	[ -p $(APIREG) ]    || mkfifo -m 620    $(APIREG)
+ 	[ -d $(APIDIR) ]    || mkdir  -m 755 -p $(APIDIR)
+ 	[ -d $(APICASUAL) ] || mkdir  -m 1770 -p $(APICASUAL)
+-	chgrp $(APIGROUP) $(APICASUAL) $(APIREG)
++#	chgrp $(APIGROUP) $(APICASUAL) $(APIREG)
+ 	$(INSTALL) -cm 755 $(LIBCMDS) $(LIBSCRIPTS) $(HALIB)
+ 	$(INSTALL) -cm 755 $(RCCMDS) $(HARCD)
+ 	$(INSTALL) -cm 755 $(RESOURCECMDS) $(RESOURCEDIR)
