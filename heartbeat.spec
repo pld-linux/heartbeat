@@ -3,16 +3,18 @@ Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	0.4.9
-Release:	4
+Version:	0.4.9.1
+Release:	0.9
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Patch0:		%{name}.dirty.time.h.patch
 Patch1:		%{name}-remove_groupadd_and_chgrp.patch
 Patch2:		%{name}-manpath.patch
+Patch3:		%{name}-doc_fix.patch
+Patch4:		%{name}-install_stupidity.patch
 # SuSE-specific; transformation unfinished
-Patch3:		%{name}-init.patch
+Patch5:		%{name}-init.patch
 URL:		http://linux-ha.org/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildRequires:	links
@@ -54,7 +56,9 @@ bardziej skomplikowanych konfiguracji.
 %patch0 -p0
 %patch1 -p0
 %patch2 -p0
-%patch3 -p0
+%patch3 -p1
+%patch4 -p1
+%patch5 -p0
 
 %build
 #zmienic to:
@@ -69,11 +73,9 @@ cd ..
 %install
 rm -rf $RPM_BUILD_ROOT
 RPM_BUILD=yes BUILD_ROOT=$RPM_BUILD_ROOT %{__make} install
-(
-cd $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d
-  rm -f ldirectord
-ln -sf %{_sbindir}/ldirectord ldirectord
-)
+
+rm -f $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/ldirectord
+ln -sf %{_sbindir}/ldirectord $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/ldirectord
 
 TEMPL=$RPM_BUILD_ROOT/var/adm/fillup-templates
 if [ ! -d $TEMPL ]; then
@@ -83,32 +85,6 @@ install rc.config.heartbeat $TEMPL
 
 rm -f doc/{*.html,*.8,COPYING,Makefile*}
 
-%files
-%defattr(644,root,root,755)
-%doc doc/*
-# needs fixing - don't use defattr(-)!!!
-%defattr(-,root,root)
-%dir %{_sysconfdir}/ha.d
-%attr (755,root,root) %{_sysconfdir}/ha.d/harc
-%{_sysconfdir}/ha.d/shellfuncs
-%{_sysconfdir}/ha.d/rc.d
-%{_sysconfdir}/ha.d/README.config
-%{_sysconfdir}/ha.d/conf
-
-# this is probably not the best location for binaries...
-%{_libdir}/heartbeat
-%{_libdir}/libhbclient.so
-%{_libdir}/libhbclient.a
-%{_sysconfdir}/ha.d/resource.d/
-%{_sysconfdir}/rc.d/init.d/heartbeat
-%{_sysconfdir}/logrotate.d/heartbeat
-/var/adm/fillup-templates/rc.config.heartbeat
-%dir /var/lib/heartbeat
-%attr (600, root, root)     /var/lib/heartbeat/fifo
-%attr (750, root, haclient) /var/lib/heartbeat/api
-%attr (620, root, haclient) /var/lib/heartbeat/register
-%attr (1770, root, haclient) /var/lib/heartbeat/casual
-%{_mandir}/man8/heartbeat.8*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -149,3 +125,33 @@ fi
 if [ "$1" = "0" ]; then
 	/usr/sbin/groupdel haclient 2>/dev/null
 fi
+
+%files
+%defattr(644,root,root,755)
+%doc doc/*
+%attr (755,root,root) %{_sysconfdir}/ha.d/harc
+%attr (755,root,root) %{_sbindir}/*
+%{_sysconfdir}/ha.d/shellfuncs
+%{_sysconfdir}/ha.d/rc.d
+%{_sysconfdir}/ha.d/README.config
+%{_sysconfdir}/ha.d/conf
+%{_sysconfdir}/ha.d/resource.d/
+%dir %{_sysconfdir}/ha.d
+%{_sysconfdir}/rc.d/init.d/*
+%{_sysconfdir}/logrotate.d/*
+
+# this is probably not the best location for binaries...
+%{_libdir}/heartbeat
+#%{_libdir}/libhbclient.so
+#%{_libdir}/libhbclient.a
+%{_libdir}/*.so
+%{_libdir}/*.a
+%dir %{_libdir}/stonith
+%{_libdir}/stonith/*.so
+/var/adm/fillup-templates/rc.config.heartbeat
+%dir /var/lib/heartbeat
+%attr (600,root,root) /var/lib/heartbeat/fifo
+%attr (750,root,haclient) /var/lib/heartbeat/api
+%attr (620,root,haclient) /var/lib/heartbeat/register
+%attr (1770,root,haclient) /var/lib/heartbeat/casual
+%{_mandir}/man8/*.8*
