@@ -8,6 +8,7 @@ Release:	0.9
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
+# Source0-md5:	55dad02995b04a7122c51ca1b15738e3
 Patch0:		%{name}.dirty.time.h.patch
 Patch1:		%{name}-remove_groupadd_and_chgrp.patch
 Patch2:		%{name}-manpath.patch
