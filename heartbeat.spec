@@ -3,18 +3,20 @@ Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	1.1.3
-Release:	1
+Version:	1.2.0
+Release:	0.1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	288e584eb03939a1d784835a8db03b8e
+# Source0-md5:	b31e3f91c76fe006d2af94a868445293
+Patch0:		%{name}-ac.patch
 URL:		http://linux-ha.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libnet-devel >= 1.1.0
 BuildRequires:	libltdl-devel
 BuildRequires:	libtool
+BuildRequires:	libxml2-devel
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -52,6 +54,7 @@ bardziej skomplikowanych konfiguracji.
 
 %prep
 %setup -q
+%patch0 -p1
 
 rm -rf libltdl
 
@@ -80,9 +83,6 @@ if [ ! -d $TEMPL ]; then
 	install -d $TEMPL
 fi
 install rc.config.heartbeat $TEMPL
-
-rm -f doc/{*.html,*.8,COPYING,Makefile*}
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -126,14 +126,14 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc doc/*
+%doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,haresources,startstop}
 %attr (755,root,root) %{_sysconfdir}/ha.d/harc
 %attr (755,root,root) %{_sbindir}/*
 %{_sysconfdir}/ha.d/shellfuncs
 %{_sysconfdir}/ha.d/rc.d
 %{_sysconfdir}/ha.d/README.config
 %{_sysconfdir}/ha.d/conf
-%{_sysconfdir}/ha.d/resource.d/
+%{_sysconfdir}/ha.d/resource.d
 %dir %{_sysconfdir}/ha.d
 /etc/rc.d/init.d/*
 /etc/logrotate.d/*
