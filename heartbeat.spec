@@ -17,7 +17,11 @@ Patch4:		%{name}-install_stupidity.patch
 # SuSE-specific; transformation unfinished
 Patch5:		%{name}-init.patch
 URL:		http://linux-ha.org/
-BuildRequires:	links
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libnet-devel >= 1.1.0
+BuildRequires:	libltdl-devel
+BuildRequires:	libtool
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -62,14 +66,24 @@ bardziej skomplikowanych konfiguracji.
 #%patch4 -p1
 #%patch5 -p0
 
+rm -rf libltdl
+
 %build
-#zmienic to:
-%configure
+%{__libtoolize} --ltdl
+%{__aclocal}
+%{__autoconf}
+%{__automake}
+%configure \
+	PING=/bin/ping \
+	--with-initdir=/etc/rc.d/init.d
+
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-RPM_BUILD=yes BUILD_ROOT=$RPM_BUILD_ROOT %{__make} install
+
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/ldirectord
 ln -sf %{_sbindir}/ldirectord $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/ldirectord
