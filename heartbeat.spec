@@ -137,7 +137,7 @@ fi
 %{_sysconfdir}/ha.d/conf
 %{_sysconfdir}/ha.d/resource.d/
 %dir %{_sysconfdir}/ha.d
-%{_sysconfdir}/rc.d/init.d/*
+/etc/rc.d/init.d/*
 %{_sysconfdir}/logrotate.d/*
 
 # this is probably not the best location for binaries...
