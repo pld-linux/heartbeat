@@ -11,6 +11,7 @@ Patch0:		%{name}.dirty.time.h.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildPreReq:	links
 Requires:	sysklogd
+Prereq:		/sbin/chkconfig
 
 #%package stonith
 #Summary: Provides an interface to Shoot The Other Node In The Head 
@@ -23,7 +24,6 @@ version will also perform IP address takeover using gratuitous ARPs.
 It works correctly for a 2-node configuration, and is extensible to
 larger configurations.
 
-
 It implements the following kinds of heartbeats:
  - Bidirectional Serial Rings ("raw" serial ports)
 
@@ -35,18 +35,18 @@ na przejmowanie adresów IP. Oprogramowanie dzia³a poprawnie dla
 konfiguracji sk³adaj±cej siê z 2 hostów, mo¿na je równie¿ stosowaæ do
 bardziej skomplikowanych konfiguracji.
 
-#
 %prep
 %setup -q
 %patch0 -p0
+
 %build
 # 
 #zmienic to:
 sed -e 's/MAKE=gmake/MAKE=make/g' < Makefile > aqq
-mv aqq Makefile
+mv -f aqq Makefile
 cd doc
 sed -e 's/lynx/links/' > aqq < Makefile
-mv aqq Makefile
+mv -f aqq Makefile
 cd ..
 %{__make}
 ###########################################################
@@ -62,7 +62,7 @@ RPM_BUILD=yes BUILD_ROOT=$RPM_BUILD_ROOT make install
 (
 cd $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d
   rm -f ldirectord
-ln -s %{_sbindir}/ldirectord ldirectord
+ln -sf %{_sbindir}/ldirectord ldirectord
 )
 
 TEMPL=$RPM_BUILD_ROOT/var/adm/fillup-templates
