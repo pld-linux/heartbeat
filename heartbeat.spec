@@ -142,8 +142,8 @@ fi
 
 # this is probably not the best location for binaries...
 %{_libdir}/heartbeat
-#%{_libdir}/libhbclient.so
-#%{_libdir}/libhbclient.a
+#%%{_libdir}/libhbclient.so
+#%%{_libdir}/libhbclient.a
 %{_libdir}/*.so
 %{_libdir}/*.a
 %dir %{_libdir}/stonith
