@@ -138,7 +138,7 @@ fi
 %{_sysconfdir}/ha.d/resource.d/
 %dir %{_sysconfdir}/ha.d
 /etc/rc.d/init.d/*
-%{_sysconfdir}/logrotate.d/*
+/etc/logrotate.d/*
 
 # this is probably not the best location for binaries...
 %{_libdir}/heartbeat
