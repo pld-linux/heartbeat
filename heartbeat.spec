@@ -1,4 +1,4 @@
-# $Id: heartbeat.spec,v 1.5 2000-03-28 16:54:30 baggins Exp $
+# $Id: heartbeat.spec,v 1.6 2000-04-01 11:14:42 zagrodzki Exp $
 Summary:	heartbeat - heartbeat subsystem for High-Availability Linux
 Name:		heartbeat
 Version:	0.3.1
@@ -7,7 +7,7 @@ Copyright:	GPL
 Group:		Utilities
 Source:		http://www.henge.com/~alanr/ha/download/%{name}-%{version}.tar.gz
 URL:		http://www.henge.com/~alanr/ha/
-Buildroot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 heartbeat is a basic heartbeat subsystem for Linux-HA.
