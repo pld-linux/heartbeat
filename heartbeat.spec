@@ -32,7 +32,7 @@ It implements the following kinds of heartbeats:
 
 %description -l pl
 heartbeat jest podstawowym podsystemem dla systemów o podwy¿szonej
-dostêpno¶ci budowanych w oparciu o Linuxa. Zajmuje siê uruchamianiem
+dostêpno¶ci budowanych w oparciu o Linuksa. Zajmuje siê uruchamianiem
 skryptów podczas startu i zamykania systemu. Ta wersja pakietu pozwala
 na przejmowanie adresów IP. Oprogramowanie dzia³a poprawnie dla
 konfiguracji sk³adaj±cej siê z 2 hostów, mo¿na je równie¿ stosowaæ do
