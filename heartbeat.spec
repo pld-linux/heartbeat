@@ -1,4 +1,4 @@
-# $Id: heartbeat.spec,v 1.8 2000-06-09 07:22:58 kloczek Exp $
+# $Id: heartbeat.spec,v 1.9 2000-06-09 07:54:42 kloczek Exp $
 Summary:	heartbeat - heartbeat subsystem for High-Availability Linux
 Name:		heartbeat
 Version:	0.3.1
@@ -20,7 +20,7 @@ It can even do it correctly for a 2-node configuration.
 %setup -q
 
 %build
-make
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
