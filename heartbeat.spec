@@ -9,13 +9,6 @@ License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 # Source0-md5:	288e584eb03939a1d784835a8db03b8e
-Patch0:		%{name}.dirty.time.h.patch
-Patch1:		%{name}-remove_groupadd_and_chgrp.patch
-Patch2:		%{name}-manpath.patch
-Patch3:		%{name}-doc_fix.patch
-Patch4:		%{name}-install_stupidity.patch
-# SuSE-specific; transformation unfinished
-Patch5:		%{name}-init.patch
 URL:		http://linux-ha.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -59,12 +52,6 @@ bardziej skomplikowanych konfiguracji.
 
 %prep
 %setup -q
-#%patch0 -p0
-#%patch1 -p0
-#%patch2 -p0
-#%patch3 -p1
-#%patch4 -p1
-#%patch5 -p0
 
 rm -rf libltdl
 
