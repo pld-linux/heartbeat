@@ -3,12 +3,12 @@ Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	0.4.9.1
-Release:	0.9
+Version:	1.1.3
+Release:	1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	55dad02995b04a7122c51ca1b15738e3
+# Source0-md5:	288e584eb03939a1d784835a8db03b8e
 Patch0:		%{name}.dirty.time.h.patch
 Patch1:		%{name}-remove_groupadd_and_chgrp.patch
 Patch2:		%{name}-manpath.patch
@@ -55,21 +55,16 @@ bardziej skomplikowanych konfiguracji.
 
 %prep
 %setup -q
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-%patch3 -p1
-%patch4 -p1
-%patch5 -p0
+#%patch0 -p0
+#%patch1 -p0
+#%patch2 -p0
+#%patch3 -p1
+#%patch4 -p1
+#%patch5 -p0
 
 %build
 #zmienic to:
-sed -e 's/MAKE=gmake/MAKE=make/g' < Makefile > aqq
-mv -f aqq Makefile
-cd doc
-sed -e 's/lynx/links/' > aqq < Makefile
-mv -f aqq Makefile
-cd ..
+%configure
 %{__make}
 
 %install
