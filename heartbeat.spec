@@ -5,7 +5,7 @@ Version:	0.4.9
 Release:	3
 License:	GPL
 URL:		http://linux-ha.org/
-Group:		Applications/Utilities
+Group:		Applications
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Patch0:		%{name}.dirty.time.h.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
