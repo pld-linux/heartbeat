@@ -106,25 +106,7 @@ rm -rf $RPM_BUILD_DIR/heartbeat-0.4.9
 
 ###########################################################
 %pre
-###########################################################
-#
-#	This isn't perfect.  But getting every distribution
-#	to agree on group id's seems hard to me :-(
-#
-if
-  grep '^haclient:' etc/group >/dev/null
-then
-  : OK group haclient already present
-else
-  GROUPOPT="-g 60"
-  if
-    usr/sbin/groupadd $GROUPOPT haclient 2>/dev/null
-  then
-    : OK we were able to add group haclient
-  else
-    usr/sbin/groupadd haclient
-  fi
-fi
+GROUP=haclient; GID=60; %groupadd
 #
 #  Multi-distribution kludge for init scripts...
 #
@@ -171,31 +153,7 @@ fi
 ###########################################################
 
 # Run heartbeat on startup
-if
-  [ -f etc/SuSE-release ]
-then
-  for d in etc/rc.d/init.d/rc[23].d
-  do
-    rm -f $d/S10heartbeat
-    rm -f $d/S99heartbeat; ln -s ../heartbeat $d/S99heartbeat 
-    rm -f $d/K35heartbeat; ln -s ../heartbeat $d/K35heartbeat
-  done
-  FILLUP=/bin/fillup
-  if 
-    $FILLUP -q -d = etc/rc.config var/adm/fillup-templates/rc.config.heartbeat
-  then
-    : fillup returned OK
-  else
-    echo "ERROR: $FILLUP failed. This should not happen. Please compare"
-    echo "/etc/rc.config and /var/adm/fillup-templates/rc.config.heartbeat"
-    echo "and update by hand."
-  fi
-elif
-  [ -x sbin/chkconfig ]
-then
-  sbin/chkconfig --add heartbeat
-fi
-true
+%chkconfig_add
 
 ###########################################################
 %preun
@@ -212,19 +170,14 @@ w
 !EOF
 }
 
+%chkconfig_del
 if
   [ $1 = 0 ]
 then
-  [ -x sbin/chkconfig ] && sbin/chkconfig --del heartbeat
   if
     [ ! -x etc/ppp/ip-up.heart ]
   then
     Uninstall_PPP_hack
   fi
-fi
-if
-   [ -r etc/SuSE-release ]
-then
-  rm -f sbin/init.d/rc[23]/*heartbeat
 fi
 true
