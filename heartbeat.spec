@@ -6,8 +6,6 @@ Release:	3
 License:	GPL
 URL:		http://linux-ha.org/
 Group:		Applications/System
-Group(de):	Applikationen/System
-Group(pl):	Aplikacje/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Patch0:		%{name}.dirty.time.h.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
