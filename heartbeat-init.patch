@@ -9,11 +9,3 @@
  LOGROTATED=$(BUILD_ROOT)/etc/logrotate.d
  
  #       Debian wants things to start with DESTDIR,
---- heartbeat/heartbeat.sh.orig	Thu Apr  4 19:53:18 2002
-+++ heartbeat/heartbeat.sh	Thu Apr  4 19:53:23 2002
-@@ -1,4 +1,4 @@
--#!/bin/sh
-+#!/bin/bash
- #
- #	$Id$
- #
