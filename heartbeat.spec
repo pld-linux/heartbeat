@@ -2,15 +2,13 @@ Summary: heartbeat - heartbeat subsystem for High-Availability Linux
 Summary(pl):  podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Name:	heartbeat
 Version:	0.4.9
-Release:	2
+Release:	3
 Copyright: GPL
 URL: http://linux-ha.org/
 Group: Utilities
 Group(pl): Narzêdzia
-#Packager: Alan Robertson <alanr@henge.com>
 Source: http://linux-ha.org/download/heartbeat-0.4.9.tar.gz
-Patch0: heartbeat.brzydki.patch
-#Buildroot: /var/tmp/heartbeat-root
+Patch0: heartbeat.dirty.time.h.patch
 BuildRoot:      %{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildPreReq: links
 Requires: sysklogd
@@ -39,9 +37,8 @@ heartbeat jest podstawowym podsystemem dla systemów o podwy¿szonej dostêpno¶ci b
 %changelog
 #
 %prep
-%setup
+%setup -q
 %patch0 -p0
-#patch -p0 < %{PATCH0}
 %build
 # 
 #zmienic to:
