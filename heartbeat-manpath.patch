@@ -1,0 +1,33 @@
+--- doc/Makefile.orig	Thu Apr  4 15:38:57 2002
++++ doc/Makefile	Thu Apr  4 15:38:57 2002
+@@ -16,7 +16,7 @@
+ #       BUILD_ROOT=$RPM_BUILD_ROOT make install
+ 
+ DOCDIR=$(BUILD_ROOT)/usr/doc/$(PKG)
+-MANDIR=$(BUILD_ROOT)/usr/man
++MANDIR=$(BUILD_ROOT)/usr/share/man
+ 
+ HTML2TXT = TERM=vt100 links -dump
+ INSTALL = install
+--- ldirectord/Makefile.orig	Thu Apr  4 15:45:15 2002
++++ ldirectord/Makefile	Thu Apr  4 15:45:51 2002
+@@ -11,7 +11,7 @@
+ 
+ POD2MAN		= pod2man
+ SBIN		= $(BUILD_ROOT)/usr/sbin
+-MANDIR		= $(BUILD_ROOT)/usr/man/man8
++MANDIR		= $(BUILD_ROOT)/usr/share/man/man8
+ LOGROTATED	= etc/logrotate.d
+ LOGROTATE	= $(BUILD_ROOT)/$(LOGROTATED)
+ INITD		= etc/init.d
+--- Makefile.orig	Thu Apr  4 15:48:47 2002
++++ Makefile	Thu Apr  4 15:49:12 2002
+@@ -32,7 +32,7 @@
+ FIFO=$(VARRUN)/heartbeat-fifo
+ HAPPP=$(VARRUN)/ppp.d
+ DOCDIR=$(BUILD_ROOT)/usr/doc/heartbeat
+-MANDIR=$(BUILD_ROOT)/usr/man
++MANDIR=$(BUILD_ROOT)/usr/share/man
+ INITSCRIPT=$(BUILD_ROOT)/$(INITD)/$(PKG)
+ LOGROTATESCRIPT=$(BUILD_ROOT)/$(LOGROTATED)/$(PKG)
+ LOGROTATEDIR=$(BUILD_ROOT)/$(LOGROTATED)
