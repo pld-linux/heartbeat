@@ -1,4 +1,4 @@
-# $Id: heartbeat.spec,v 1.2 1999-05-11 01:27:31 kloczek Exp $
+# $Id: heartbeat.spec,v 1.3 1999-07-09 16:21:55 kloczek Exp $
 Summary:	heartbeat - heartbeat subsystem for High-Availability Linux
 Name:		heartbeat
 Version:	0.3.1
