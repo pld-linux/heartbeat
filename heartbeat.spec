@@ -8,13 +8,17 @@ URL:		http://linux-ha.org/
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Patch0:		%{name}.dirty.time.h.patch
+Patch1:		%{name}-remove_groupadd_and_chgrp.patch
+Patch2:		%{name}-manpath.patch
+# SuSE-specific; transformation unfinished
+Patch3:		%{name}-init.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildRequires:	links
-Requires:	sysklogd
-Prereq:		/sbin/chkconfig
-Prereq:		/usr/bin/getgid
-Prereq:		/usr/sbin/groupadd
-Prereq:		/usr/sbin/groupdel
+Requires:	syslogdaemon
+Requires(pre):	/sbin/chkconfig
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
+Requires(post):	/usr/sbin/groupdel
 
 %description
 heartbeat is a basic heartbeat subsystem for Linux-HA. It will run
@@ -41,6 +45,9 @@ bardziej skomplikowanych konfiguracji.
 %prep
 %setup -q
 %patch0 -p0
+%patch1 -p0
+%patch2 -p0
+%patch3 -p0
 
 %build
 #zmienic to:
@@ -69,24 +76,29 @@ then
 fi
 install rc.config.heartbeat $TEMPL
 
+rm -f doc/{*.html,*.8,COPYING,Makefile*}
+gzip -9nf doc/*[^f]
+
 %files
 %defattr(644,root,root,755)
 %defattr(-,root,root)
 %dir %{_sysconfdir}/ha.d
-%{_sysconfdir}/ha.d/harc
+%attr (755,root,root) %{_sysconfdir}/ha.d/harc
 %{_sysconfdir}/ha.d/shellfuncs
 %{_sysconfdir}/ha.d/rc.d
 %{_sysconfdir}/ha.d/README.config
 %{_sysconfdir}/ha.d/conf
+
+# this is probably not the best location for binaries...
 %{_libdir}/heartbeat
 %{_libdir}/libhbclient.so
 %{_libdir}/libhbclient.a
 %{_sysconfdir}/ha.d/resource.d/
-%{_sysconfdir}/init.d/heartbeat
-/etc/logrotate.d/heartbeat
+%{_sysconfdir}/rc.d/init.d/heartbeat
+%{_sysconfdir}/logrotate.d/heartbeat
 /var/adm/fillup-templates/rc.config.heartbeat
 %dir /var/lib/heartbeat
-%attr (600, root, root)       /var/lib/heartbeat/fifo
+%attr (600, root, root)     /var/lib/heartbeat/fifo
 %attr (750, root, haclient) /var/lib/heartbeat/api
 %attr (620, root, haclient) /var/lib/heartbeat/register
 %attr (1770, root, haclient) /var/lib/heartbeat/casual
@@ -103,7 +115,7 @@ if [ -n "`/usr/bin/getgid haclient`" ]; then
 		exit 1
 	fi
 else
-	/usr/sbin/groupadd -g 60 -r
+	/usr/sbin/groupadd -g 60 -r haclient
 fi
 
 %post
