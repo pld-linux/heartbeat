@@ -17,13 +17,14 @@ Patch4:		%{name}-install_stupidity.patch
 # SuSE-specific; transformation unfinished
 Patch5:		%{name}-init.patch
 URL:		http://linux-ha.org/
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildRequires:	links
-Requires(pre):	/sbin/chkconfig
+PreReq:		rc-scripts
 Requires(pre): /usr/bin/getgid
 Requires(pre): /usr/sbin/groupadd
-Requires(post):        /usr/sbin/groupdel
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
 Requires:	syslogdaemon
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 heartbeat is a basic heartbeat subsystem for Linux-HA. It will run
