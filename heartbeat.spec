@@ -2,13 +2,14 @@ Summary: heartbeat - heartbeat subsystem for High-Availability Linux
 Summary(pl):  podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Name:	heartbeat
 Version:	0.4.9
-Release:	1
+Release:	2
 Copyright: GPL
 URL: http://linux-ha.org/
 Group: Utilities
 Group(pl): Narzêdzia
 #Packager: Alan Robertson <alanr@henge.com>
 Source: http://linux-ha.org/download/heartbeat-0.4.9.tar.gz
+Patch0: heartbeat.brzydki.patch
 #Buildroot: /var/tmp/heartbeat-root
 BuildRoot:      %{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildPreReq: links
@@ -33,12 +34,14 @@ It implements the following kinds of heartbeats:
 	- "ping" heartbeats (for routers, switches, etc.)
 	   (to be used for breaking ties in 2-node systems)
 %description(pl)
-heartbeat jest podstawowy podsystemem dla systemów o podwy¿szonej dostêpno¶ci budowanych w oparciu o Linuxa. Zajmuje siê uruchamianiem skryptów podczas startu i zamykania systemu. Ta wersja pakietu pozwala na przejmowanie adresów IP. Oprogramowanie dzia³a poprawnie dla konfiguracji sk³adaj±cej siê z 2 hostów, mo¿na je równie¿ stosowaæ do bardziej skomplikowanych konfiguracji.
+heartbeat jest podstawowym podsystemem dla systemów o podwy¿szonej dostêpno¶ci budowanych w oparciu o Linuxa. Zajmuje siê uruchamianiem skryptów podczas startu i zamykania systemu. Ta wersja pakietu pozwala na przejmowanie adresów IP. Oprogramowanie dzia³a poprawnie dla konfiguracji sk³adaj±cej siê z 2 hostów, mo¿na je równie¿ stosowaæ do bardziej skomplikowanych konfiguracji.
 
 %changelog
-
+#
 %prep
 %setup
+%patch0 -p0
+#patch -p0 < %{PATCH0}
 %build
 # 
 #zmienic to:
