@@ -1,9 +1,11 @@
 Summary:	Heartbeat - subsystem for High-Availability Linux
+Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
+Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	0.4.9
-Release:	3
-License:	GPL
+Release:	4
+License:	GPL v2
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Patch0:		%{name}.dirty.time.h.patch
@@ -29,6 +31,11 @@ larger configurations.
 
 It implements the following kinds of heartbeats:
  - Bidirectional Serial Rings ("raw" serial ports)
+
+%description -l es
+heartbeat es un sistema básico para Linux-HA. La función de este
+software es ejecutar scripts en la inicialización y al apagar las
+máquinas que lo utilizan.
 
 %description -l pl
 heartbeat jest podstawowym podsystemem dla systemów o podwy¿szonej
