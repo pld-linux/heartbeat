@@ -19,9 +19,7 @@ URL:		http://linux-ha.org/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildRequires:	links
 Requires(pre):	/sbin/chkconfig
-Requires(pre):	/usr/bin/getgid
-Requires(pre):	/usr/sbin/groupadd
-Requires(post):	/usr/sbin/groupdel
+Requires(pre):	user-haclient
 Requires:	syslogdaemon
 
 %description
@@ -89,16 +87,6 @@ rm -f doc/{*.html,*.8,COPYING,Makefile*}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-if [ -n "`/usr/bin/getgid haclient`" ]; then
-	if [ "`/usr/bin/getgid haclient`" != "60" ]; then
-		echo "Error: group haclient doesn't have gid=60. Correct this before installing heartbeat." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 60 -r haclient
-fi
-
 %post
 /sbin/chkconfig --add heartbeat
 
@@ -119,11 +107,6 @@ if [ "$1" = "0" ]; then
 	if [ ! -x etc/ppp/ip-up.heart ]; then
 		Uninstall_PPP_hack
 	fi
-fi
-
-%postun
-if [ "$1" = "0" ]; then
-	/usr/sbin/groupdel haclient 2>/dev/null
 fi
 
 %files
