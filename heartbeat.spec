@@ -1,5 +1,6 @@
-# $Id: heartbeat.spec,v 1.9 2000-06-09 07:54:42 kloczek Exp $
+# $Id: heartbeat.spec,v 1.10 2000-07-12 14:58:55 arturs Exp $
 Summary:	heartbeat - heartbeat subsystem for High-Availability Linux
+Summary(pl):	heartbeat - Podsystem pulsu (heartbeat) dla systemu wysokiej dostêpno¶ci dla Linuksa
 Name:		heartbeat
 Version:	0.3.1
 Release:	1
@@ -15,6 +16,12 @@ heartbeat is a basic heartbeat subsystem for Linux-HA. It will run
 scripts at initialization, and when machines go up or down. This
 version will also perform IP address takeover using gratuitious ARPs.
 It can even do it correctly for a 2-node configuration.
+
+%description -l pl
+heartbeat to podsystem ³±cza stanu dla systemów wysokiej dostêpno¶ci dla Linuksa. 
+Uruchamia on skrypty podczas inicjalizacji oraz wtedy, kiedy maszyny s± uruchamiane 
+i wy³±czane. Ta wersja dokonuje równie¿ przejêcia adresu IP wykorzystuj±c wolne ARP.
+Zostanie to wykonane prawid³owo nawet w przypadku konfiguracji dwuelementowej. 
 
 %prep
 %setup -q
