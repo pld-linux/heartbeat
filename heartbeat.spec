@@ -1,40 +1,40 @@
-Summary: heartbeat - heartbeat subsystem for High-Availability Linux
-Summary(pl):  podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
-Name:	heartbeat
+Summary:	heartbeat - heartbeat subsystem for High-Availability Linux
+Summary(pl):	podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
+Name:		heartbeat
 Version:	0.4.9
 Release:	3
-Copyright: GPL
-URL: http://linux-ha.org/
-Group: Utilities
-Group(pl): Narzêdzia
-Source: http://linux-ha.org/download/heartbeat-0.4.9.tar.gz
-Patch0: heartbeat.dirty.time.h.patch
-BuildRoot:      %{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-BuildPreReq: links
-Requires: sysklogd
+License:	GPL
+URL:		http://linux-ha.org/
+Group:		Applications/Utilities
+Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
+Patch0:		%{name}.dirty.time.h.patch
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+BuildPreReq:	links
+Requires:	sysklogd
 
 #%package stonith
 #Summary: Provides an interface to Shoot The Other Node In The Head 
 #Group: Utilities
 
 %description
-heartbeat is a basic heartbeat subsystem for Linux-HA.
-It will run scripts at initialization, and when machines go up or down.
-This version will also perform IP address takeover using gratuitous ARPs.
-It works correctly for a 2-node configuration, and is extensible to larger
-configurations.
+heartbeat is a basic heartbeat subsystem for Linux-HA. It will run
+scripts at initialization, and when machines go up or down. This
+version will also perform IP address takeover using gratuitous ARPs.
+It works correctly for a 2-node configuration, and is extensible to
+larger configurations.
 
 
 It implements the following kinds of heartbeats:
-	- Bidirectional Serial Rings ("raw" serial ports)
-	- UDP/IP broadcast (ethernet, etc)
-	- Bidirectional Serial PPP/UDP Rings (using PPP)
-	- "ping" heartbeats (for routers, switches, etc.)
-	   (to be used for breaking ties in 2-node systems)
-%description(pl)
-heartbeat jest podstawowym podsystemem dla systemów o podwy¿szonej dostêpno¶ci budowanych w oparciu o Linuxa. Zajmuje siê uruchamianiem skryptów podczas startu i zamykania systemu. Ta wersja pakietu pozwala na przejmowanie adresów IP. Oprogramowanie dzia³a poprawnie dla konfiguracji sk³adaj±cej siê z 2 hostów, mo¿na je równie¿ stosowaæ do bardziej skomplikowanych konfiguracji.
+ - Bidirectional Serial Rings ("raw" serial ports)
 
-%changelog
+%description(pl)
+heartbeat jest podstawowym podsystemem dla systemów o podwy¿szonej
+dostêpno¶ci budowanych w oparciu o Linuxa. Zajmuje siê uruchamianiem
+skryptów podczas startu i zamykania systemu. Ta wersja pakietu pozwala
+na przejmowanie adresów IP. Oprogramowanie dzia³a poprawnie dla
+konfiguracji sk³adaj±cej siê z 2 hostów, mo¿na je równie¿ stosowaæ do
+bardziej skomplikowanych konfiguracji.
+
 #
 %prep
 %setup -q
@@ -48,10 +48,11 @@ cd doc
 sed -e 's/lynx/links/' > aqq < Makefile
 mv aqq Makefile
 cd ..
-make
+%{__make}
 ###########################################################
 %install
 ###########################################################
+rm -rf $RPM_BUILD_ROOT
 if
   [ -z "${RPM_BUILD_ROOT}"  -a "${RPM_BUILD_ROOT}" != "/" ]
 then
@@ -59,34 +60,35 @@ then
 fi
 RPM_BUILD=yes BUILD_ROOT=$RPM_BUILD_ROOT make install
 (
-  cd $RPM_BUILD_ROOT/etc/ha.d/resource.d
+cd $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d
   rm -f ldirectord
-  ln -s /usr/sbin/ldirectord ldirectord
+ln -s %{_sbindir}/ldirectord ldirectord
 )
 
 TEMPL=$RPM_BUILD_ROOT/var/adm/fillup-templates
 if
   [ ! -d $TEMPL ]
 then
-  mkdir -p $TEMPL
+  install -d $TEMPL
 fi
-install -m 644 rc.config.heartbeat $TEMPL
+install rc.config.heartbeat $TEMPL
 
 ###########################################################
 %files
+%defattr(644,root,root,755)
 ###########################################################
 %defattr(-,root,root)
-%dir /etc/ha.d
-/etc/ha.d/harc
-/etc/ha.d/shellfuncs
-/etc/ha.d/rc.d
-/etc/ha.d/README.config
-/etc/ha.d/conf
-/usr/lib/heartbeat
-/usr/lib/libhbclient.so
-/usr/lib/libhbclient.a
-/etc/ha.d/resource.d/
-/etc/init.d/heartbeat
+%dir %{_sysconfdir}/ha.d
+%{_sysconfdir}/ha.d/harc
+%{_sysconfdir}/ha.d/shellfuncs
+%{_sysconfdir}/ha.d/rc.d
+%{_sysconfdir}/ha.d/README.config
+%{_sysconfdir}/ha.d/conf
+%{_libdir}/heartbeat
+%{_libdir}/libhbclient.so
+%{_libdir}/libhbclient.a
+%{_sysconfdir}/ha.d/resource.d/
+%{_sysconfdir}/init.d/heartbeat
 /etc/logrotate.d/heartbeat
 /var/adm/fillup-templates/rc.config.heartbeat
 %dir /var/lib/heartbeat
@@ -94,7 +96,7 @@ install -m 644 rc.config.heartbeat $TEMPL
 %attr (750, root, haclient) /var/lib/heartbeat/api
 %attr (620, root, haclient) /var/lib/heartbeat/register
 %attr (1770, root, haclient) /var/lib/heartbeat/casual
-/usr/man/man8/heartbeat.8*
+%{_mandir}/man8/heartbeat.8*
 %doc doc/*
 
 
