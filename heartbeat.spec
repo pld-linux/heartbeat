@@ -1,4 +1,4 @@
-# $Id: heartbeat.spec,v 1.7 2000-05-21 14:46:41 kloczek Exp $
+# $Id: heartbeat.spec,v 1.8 2000-06-09 07:22:58 kloczek Exp $
 Summary:	heartbeat - heartbeat subsystem for High-Availability Linux
 Name:		heartbeat
 Version:	0.3.1
@@ -25,7 +25,7 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 
-make install
+%{__make} install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
