@@ -35,7 +35,7 @@ konfiguracji sk³adaj±cej siê z 2 hostów, mo¿na je równie¿ stosowaæ do
 bardziej skomplikowanych konfiguracji.
 
 #%package stonith
-#Summary: Provides an interface to Shoot The Other Node In The Head 
+#Summary: Provides an interface to Shoot The Other Node In The Head
 #Group: Utilities
 
 %prep
