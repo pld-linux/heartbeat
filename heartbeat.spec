@@ -4,7 +4,6 @@ Name:		heartbeat
 Version:	0.4.9
 Release:	3
 License:	GPL
-URL:		http://linux-ha.org/
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Patch0:		%{name}.dirty.time.h.patch
@@ -12,13 +11,14 @@ Patch1:		%{name}-remove_groupadd_and_chgrp.patch
 Patch2:		%{name}-manpath.patch
 # SuSE-specific; transformation unfinished
 Patch3:		%{name}-init.patch
+URL:		http://linux-ha.org/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildRequires:	links
-Requires:	syslogdaemon
 Requires(pre):	/sbin/chkconfig
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(post):	/usr/sbin/groupdel
+Requires:	syslogdaemon
 
 %description
 heartbeat is a basic heartbeat subsystem for Linux-HA. It will run
@@ -69,18 +69,17 @@ ln -sf %{_sbindir}/ldirectord ldirectord
 )
 
 TEMPL=$RPM_BUILD_ROOT/var/adm/fillup-templates
-if
-  [ ! -d $TEMPL ]
-then
-  install -d $TEMPL
+if [ ! -d $TEMPL ]; then
+	install -d $TEMPL
 fi
 install rc.config.heartbeat $TEMPL
 
 rm -f doc/{*.html,*.8,COPYING,Makefile*}
-gzip -9nf doc/*[^f]
 
 %files
 %defattr(644,root,root,755)
+%doc doc/*
+# needs fixing - don't use defattr(-)!!!
 %defattr(-,root,root)
 %dir %{_sysconfdir}/ha.d
 %attr (755,root,root) %{_sysconfdir}/ha.d/harc
@@ -103,7 +102,6 @@ gzip -9nf doc/*[^f]
 %attr (620, root, haclient) /var/lib/heartbeat/register
 %attr (1770, root, haclient) /var/lib/heartbeat/casual
 %{_mandir}/man8/heartbeat.8*
-%doc doc/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -111,7 +109,7 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 if [ -n "`/usr/bin/getgid haclient`" ]; then
 	if [ "`/usr/bin/getgid haclient`" != "60" ]; then
-		echo "Warning: group haclient haven't gid=60. Correct this before installing heartbeat" 1>&2
+		echo "Error: group haclient doesn't have gid=60. Correct this before installing heartbeat." 1>&2
 		exit 1
 	fi
 else
