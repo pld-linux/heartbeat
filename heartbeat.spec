@@ -5,7 +5,7 @@ Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disp
 Name:		heartbeat
 Version:	0.4.9
 Release:	4
-License:	GPL v2
+License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Patch0:		%{name}.dirty.time.h.patch
