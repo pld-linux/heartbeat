@@ -1,3 +1,4 @@
+%include	/usr/lib/rpm/macros.perl
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
@@ -11,16 +12,23 @@ Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 # Source0-md5:	b31e3f91c76fe006d2af94a868445293
 Patch0:		%{name}-ac.patch
 URL:		http://linux-ha.org/
+BuildRequires:	OpenIPMI-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	curl-devel
+BuildRequires:	glib-devel
 BuildRequires:	libnet-devel >= 1.1.0
 BuildRequires:	libltdl-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel
+BuildRequires:	net-snmp-devel
+BuildRequires:	perl-libwww
+BuildRequires:	rpm-perlprov
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(post,preun):	/sbin/chkconfig
+Requires(post,postun):	/sbin/ldconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires:	syslogdaemon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -78,11 +86,8 @@ rm -rf $RPM_BUILD_ROOT
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/ldirectord
 ln -sf %{_sbindir}/ldirectord $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/ldirectord
 
-TEMPL=$RPM_BUILD_ROOT/var/adm/fillup-templates
-if [ ! -d $TEMPL ]; then
-	install -d $TEMPL
-fi
-install rc.config.heartbeat $TEMPL
+# plugins are lt_dlopened, but using *.so names, so *.la are not used
+rm -f $RPM_BUILD_ROOT%{_libdir}/{heartbeat,pils,stonith}/plugins/*/*.{la,a}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -98,11 +103,12 @@ else
 fi
 
 %post
+/sbin/ldconfig
 /sbin/chkconfig --add heartbeat
 
 %preun
 Uninstall_PPP_hack() {
-	file2hack=etc/ppp/ip-up.local
+	file2hack=/etc/ppp/ip-up.local
 	echo "NOTE: Restoring /$file2hack"
 	MARKER="Heartbeat"
 	ed -s $file2hack <<-!EOF  2>/dev/null
@@ -114,12 +120,13 @@ w
 
 if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del heartbeat
-	if [ ! -x etc/ppp/ip-up.heart ]; then
+	if [ ! -x /etc/ppp/ip-up.heart ]; then
 		Uninstall_PPP_hack
 	fi
 fi
 
 %postun
+/sbin/ldconfig
 if [ "$1" = "0" ]; then
 	/usr/sbin/groupdel haclient 2>/dev/null
 fi
@@ -127,29 +134,40 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,haresources,startstop}
-%attr (755,root,root) %{_sysconfdir}/ha.d/harc
-%attr (755,root,root) %{_sbindir}/*
-%{_sysconfdir}/ha.d/shellfuncs
-%{_sysconfdir}/ha.d/rc.d
-%{_sysconfdir}/ha.d/README.config
-%{_sysconfdir}/ha.d/conf
-%{_sysconfdir}/ha.d/resource.d
-%dir %{_sysconfdir}/ha.d
-/etc/rc.d/init.d/*
-/etc/logrotate.d/*
-
-# this is probably not the best location for binaries...
-%{_libdir}/heartbeat
-#%%{_libdir}/libhbclient.so
-#%%{_libdir}/libhbclient.a
-%{_libdir}/*.so
-%{_libdir}/*.a
+%attr(755,root,root) %{_sbindir}/*
+%attr(755,root,root) %{_libdir}/lib*.so.*.*.*
+%dir %{_libdir}/heartbeat
+%dir %{_libdir}/heartbeat/cts
+%attr(755,root,root) %{_libdir}/heartbeat/cts/*.py
+%dir %{_libdir}/heartbeat/plugins
+%dir %{_libdir}/heartbeat/plugins/*
+%attr(755,root,root) %{_libdir}/heartbeat/plugins/*/*.so
+%attr(755,root,root) %{_libdir}/heartbeat/[!cp]*
+%attr(755,root,root) %{_libdir}/heartbeat/c[!t]*
+%dir %{_libdir}/pils
+%dir %{_libdir}/pils/plugins
+%dir %{_libdir}/pils/plugins/*
+%attr(755,root,root) %{_libdir}/pils/plugins/*/*.so
 %dir %{_libdir}/stonith
-%{_libdir}/stonith/*.so
-/var/adm/fillup-templates/rc.config.heartbeat
+%dir %{_libdir}/stonith/plugins
+%dir %{_libdir}/stonith/plugins/stonith
+%attr(755,root,root) %{_libdir}/stonith/plugins/stonith/*.so
+%dir %{_sysconfdir}/ha.d
+%dir %{_sysconfdir}/ha.d/conf
+%attr(755,root,root) %{_sysconfdir}/ha.d/rc.d
+%attr(755,root,root) %{_sysconfdir}/ha.d/resource.d
+%{_sysconfdir}/ha.d/README.config
+%attr(755,root,root) %{_sysconfdir}/ha.d/harc
+%{_sysconfdir}/ha.d/shellfuncs
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/heartbeat
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/ldirectord
+%attr(754,root,root) /etc/rc.d/init.d/heartbeat
+%attr(754,root,root) /etc/rc.d/init.d/ldirectord
 %dir /var/lib/heartbeat
-%attr (600,root,root) /var/lib/heartbeat/fifo
-%attr (750,root,haclient) /var/lib/heartbeat/api
-%attr (620,root,haclient) /var/lib/heartbeat/register
-%attr (1770,root,haclient) /var/lib/heartbeat/casual
+%attr(750,root,haclient) %dir /var/lib/heartbeat/api
+%attr(1770,root,haclient) %dir /var/lib/heartbeat/casual
+#%attr(755,hacluster,haclient) %dir /var/lib/heartbeat/ccm
+%attr(755,root,haclient) %dir /var/lib/heartbeat/ccm
+%attr(755,root,haclient) %dir /var/lib/heartbeat/ckpt
+%attr(600,root,root) /var/lib/heartbeat/fifo
 %{_mandir}/man8/*.8*
