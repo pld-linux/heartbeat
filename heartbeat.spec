@@ -1,4 +1,4 @@
-# $Id: heartbeat.spec,v 1.3 1999-07-09 16:21:55 kloczek Exp $
+# $Id: heartbeat.spec,v 1.4 1999-07-12 23:05:58 kloczek Exp $
 Summary:	heartbeat - heartbeat subsystem for High-Availability Linux
 Name:		heartbeat
 Version:	0.3.1
@@ -39,35 +39,3 @@ rm -rf $RPM_BUILD_ROOT
 /etc/ha.d/rc.d
 /etc/ha.d/bin
 %doc /usr/doc/heartbeat-0.3.1
-
-%changelog
-* Sun May 10 1999 Alan Robertson <alanr@henge.com>
-+ Version 0.3.1
-  + Make ChangeLog file from RPM specfile
-  + Made ipresources only install in the DOC directory as a sample
-
-* Sun May 09 1999 Alan Robertson <alanr@henge.com>
-+ Version 0.3.0
-  + Added UDP broadcast heartbeat (courtesy of Tom Vogt)
-  + Significantly restructured code making it easier to add heartbeat media
-  + added new directives to config file:
-    + udp interface-name
-    + udpport port-number
-    + baud    serial-baud-rate
-  + made manual daemon shutdown easier (only need to kill one)
-  + moved the sample ha.cf file to the Doc directory
-
-* Sat Mar 27 1999 Alan Robertson <alanr@henge.com>
-+ Version 0.2.0
-  + Make an RPM out of it
-  + Integrated IP address takeover gotten from Horms
-  + Added support to tickle a watchdog timer whenever our heart beats
-  + Integrated enough basic code to allow a 2-node demo to occur
-  + Integrated patches from Andrew Hildebrand <andrew@pdi.com> to allow it
-    to run under IRIX.
-  - Known Bugs
-    - Only supports 2-node clusters
-    - Only supports a single IP interface per node in the cluster
-    - Doesn't yet include Tom Vogt's ethernet heartbeat code
-    - No documentation
-    - Not very useful yet :-)
