@@ -19,8 +19,8 @@ Patch5:		%{name}-init.patch
 URL:		http://linux-ha.org/
 BuildRequires:	links
 PreReq:		rc-scripts
-Requires(pre): /usr/bin/getgid
-Requires(pre): /usr/sbin/groupadd
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires:	syslogdaemon
@@ -93,12 +93,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ -n "`/usr/bin/getgid haclient`" ]; then
-       if [ "`/usr/bin/getgid haclient`" != "60" ]; then
-               echo "Error: group haclient doesn't have gid=60. Correct this before installing heartbeat." 1>&2
-               exit 1
-       fi
+	if [ "`/usr/bin/getgid haclient`" != "60" ]; then
+		echo "Error: group haclient doesn't have gid=60. Correct this before installing heartbeat." 1>&2
+		exit 1
+	fi
 else
-       /usr/sbin/groupadd -g 60 -r haclient
+	/usr/sbin/groupadd -g 60 -r haclient
 fi
 
 %post
@@ -106,10 +106,10 @@ fi
 
 %preun
 Uninstall_PPP_hack() {
-  file2hack=etc/ppp/ip-up.local
-  echo "NOTE: Restoring /$file2hack"
-  MARKER="Heartbeat"
-  ed -s $file2hack <<-!EOF  2>/dev/null
+	file2hack=etc/ppp/ip-up.local
+	echo "NOTE: Restoring /$file2hack"
+	MARKER="Heartbeat"
+	ed -s $file2hack <<-!EOF  2>/dev/null
 H
 g/ $MARKER\$/d
 w
@@ -125,7 +125,7 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-       /usr/sbin/groupdel haclient 2>/dev/null
+	/usr/sbin/groupdel haclient 2>/dev/null
 fi
 
 %files
