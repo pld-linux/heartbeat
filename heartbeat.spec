@@ -24,7 +24,7 @@ BuildRequires:	libxml2-devel
 BuildRequires:	net-snmp-devel
 BuildRequires:	perl-libwww
 BuildRequires:	rpm-perlprov
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -95,14 +95,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/{heartbeat,pils,stonith}/plugins/*/*.{la,a}
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`/usr/bin/getgid haclient`" ]; then
-	if [ "`/usr/bin/getgid haclient`" != 60 ]; then
-		echo "Error: group haclient doesn't have gid=60. Correct this before installing heartbeat." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 60 haclient 1>&2
-fi
+%groupadd -g 60 haclient
 
 %post
 /sbin/ldconfig
