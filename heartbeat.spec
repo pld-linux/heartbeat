@@ -85,7 +85,7 @@ Summary:	Monitor virtual services provided by LVS
 Summary(pl):	Demon monitoruj±cy wirtualne us³ugi dostarczane poprzez LVS
 Group:		Applications/System
 PreReq:		rc-scripts
-Requires(post,preun):   /sbin/chkconfig
+Requires(post,preun):	/sbin/chkconfig
 Requires:	ipvsadm
 
 %description ldirectord
@@ -182,7 +182,7 @@ Uninstall_PPP_hack() {
 	file2hack=/etc/ppp/ip-up.local
 	echo "NOTE: Restoring /$file2hack"
 	MARKER="Heartbeat"
-	ed -s $file2hack <<-!EOF  2>/dev/null
+	ed -s $file2hack <<-!EOF 2>/dev/null
 H
 g/ $MARKER\$/d
 w
