@@ -64,36 +64,57 @@ konfiguracji sk³adaj±cej siê z 2 hostów, mo¿na je równie¿ stosowaæ do
 bardziej skomplikowanych konfiguracji.
 
 %package stonith
-Summary: Provides an interface to Shoot The Other Node In The Head
-Group: Utilities
+Summary:	Provides an interface to Shoot The Other Node In The Head
+Summary(pl):	Interfejs do "odstrzelenia" drugiego wêz³a w klastrze
+Group:		Applications/System
 
 %description stonith
+Provides an interface to Shoot The Other Node In The Head.
+
+%description stonith -l pl
+STONITH (Shoot The Other Node In The Head) to interfejs s³u¿±cy do
+"odstrzelenia" drugiego wêz³a w klastrze.
 
 %package ldirectord
 Summary:	Monitor daemon for maintaining high availability resources
-Group:		Utilities
+Summary(pl):	Demon monitoruj±cy do zarz±dzania zasobami o wysokiej dostêpno¶ci
+Group:		Applications/System
 PreReq:         rc-scripts
 Requires(post,preun):   /sbin/chkconfig
 Requires:	ipvsadm
 
 %description ldirectord
+Monitor daemon for maintaining high availability resources.
+
+%description ldirectord -l pl
+Demon monitoruj±cy do zarz±dzania zasobami o wysokiej dostêpno¶ci.
 
 %package devel
-Summary:	-
-Group:		Networking/Utilities
+Summary:	Header files for Heartbeat
+Summary(pl):	Pliki nag³ówkowe Heartbeat
+Group:		Development/Libraries
+Requires:	%{name} = %{version}-%{release}
 
 %description devel
+Header files for Heartbeat.
+
+%description devel -l pl
+Pliki nag³ówkowe Heartbeat.
 
 %package static
-Summary:	-
-Group:		Networking/Utilities
-%description static
+Summary:	Static Heartbeat libraries
+Summary(pl):	Statyczne biblioteki Heartbeat
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
 
-#%package
+%description static
+Static Heartbeat libraries.
+
+%description static -l pl
+Statyczne biblioteki Heartbeat.
 
 %prep
 %setup -q
-#%%patch0 -p1
 
 rm -rf libltdl
 
@@ -172,6 +193,9 @@ if [ "$1" = "0" ]; then
 	%groupremove haclient
 fi
 
+%post	stonith -p /sbin/ldconfig
+%postun	stonith -p /sbin/ldconfig
+
 %files
 %defattr(644,root,root,755)
 %doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,haresources,startstop}
@@ -205,18 +229,19 @@ fi
 #%%attr(600,root,root) /var/lib/heartbeat/fifo
 %{_mandir}/man1/*.1*
 %{_mandir}/man8/*.8*
+%exclude %{_mandir}/man8/*ldirectord*.8*
 /var/lib/heartbeat/cores
-%attr(755,root,root)%{_bindir}/cl*
+%attr(755,root,root) %{_bindir}/cl*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/authkeys
 
 %files stonith
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libstonith.so.*.*.*
 %dir %{_libdir}/stonith
 %dir %{_libdir}/stonith/plugins
 %dir %{_libdir}/stonith/plugins/external
 %dir %{_libdir}/stonith/plugins/stonith2
-%{_libdir}/libstonith.so.*
 %attr(755,root,root) %{_libdir}/stonith/plugins/stonith2/*.so
 %attr(755,root,root) %{_sbindir}/meatclient
 %attr(755,root,root) %{_sbindir}/stonith
@@ -228,11 +253,11 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/ldirectord
 %attr(754,root,root) /etc/rc.d/init.d/ldirectord
 %attr(755,root,root) %{_sbindir}/*ldirectord*
-%{_mandir}/man8/*ldirectord*8.gz
+%{_mandir}/man8/*ldirectord*.8*
 
 %files devel
 %defattr(644,root,root,755)
-%{_includedir}
+%{_includedir}/*
 %{_libdir}/*.la
 
 %files static
