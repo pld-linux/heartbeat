@@ -5,7 +5,7 @@ Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	1.99.5
-Release:	0.2
+Release:	0.3
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
@@ -13,7 +13,8 @@ Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	ldirectord.init
 URL:		http://linux-ha.org/
-BuildRequires:	OpenIPMI-devel
+BuildRequires:	OpenIPMI-devel >= 1.4
+BuildRequires:	OpenIPMI-devel < 2.0.0
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gdbm-devel
@@ -31,13 +32,17 @@ BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	swig
 PreReq:		rc-scripts
+Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
 Requires(post,preun):	/sbin/chkconfig
 Requires(post,postun):	/sbin/ldconfig
 Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires:	syslogdaemon
 Provides:	group(haclient)
+Provides:	user(hacluster)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -76,42 +81,41 @@ STONITH (Shoot The Other Node In The Head) to interfejs s³u¿±cy do
 "odstrzelenia" drugiego wêz³a w klastrze.
 
 %package ldirectord
-Summary:	Monitor daemon for maintaining high availability resources
-Summary(pl):	Demon monitoruj±cy do zarz±dzania zasobami o wysokiej dostêpno¶ci
+Summary:	Monitor virtual services provided by LVS
+Summary(pl):	Demon monitoruj±cy wirtualne serwisy dostaczanych przez LVS
 Group:		Applications/System
 PreReq:         rc-scripts
 Requires(post,preun):   /sbin/chkconfig
 Requires:	ipvsadm
 
 %description ldirectord
-Monitor daemon for maintaining high availability resources.
-
-%description ldirectord -l pl
-Demon monitoruj±cy do zarz±dzania zasobami o wysokiej dostêpno¶ci.
+ldirectord is a stand-alone daemon to monitor services of real
+for virtual services provided by The Linux Virtual Server
+(http://www.linuxvirtualserver.org/).
 
 %package devel
-Summary:	Header files for Heartbeat
-Summary(pl):	Pliki nag³ówkowe Heartbeat
+Summary:	Heartbeat developement header files and libraries
+Summary(pl):	Pliki nag³ówkowe i biblioteki heartbeat
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
-Header files for Heartbeat.
+Heartbeat developement header files and libraries.
 
 %description devel -l pl
-Pliki nag³ówkowe Heartbeat.
+Pliki nag³ówkowe i biblioteki heartbeat.
 
 %package static
-Summary:	Static Heartbeat libraries
-Summary(pl):	Statyczne biblioteki Heartbeat
+Summary:	Heartbeat static libraries
+Summary(pl):	Biblioteki statyczne heartbeat
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
-Static Heartbeat libraries.
+Heartbeat static libraries.
 
-%description static -l pl
-Statyczne biblioteki Heartbeat.
+%description -l static
+Biblioteki statyczne heartbeat.
 
 %prep
 %setup -q
@@ -190,6 +194,7 @@ fi
 %postun
 /sbin/ldconfig
 if [ "$1" = "0" ]; then
+	%userremove hacluster
 	%groupremove haclient
 fi
 
@@ -206,8 +211,7 @@ fi
 %dir %{_libdir}/heartbeat/plugins
 %dir %{_libdir}/heartbeat/plugins/*
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/*/*.so
-%attr(755,root,root) %{_libdir}/heartbeat/[!cp]*
-%attr(755,root,root) %{_libdir}/heartbeat/c[!t]*
+%attr(755,root,root) %{_libdir}/heartbeat/*
 %dir %{_libdir}/pils
 %dir %{_libdir}/pils/plugins
 %dir %{_libdir}/pils/plugins/*
@@ -220,6 +224,7 @@ fi
 %{_sysconfdir}/ha.d/shellfuncs
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/heartbeat
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
+%attr(755,root,root) %{_libdir}/ocf
 %dir /var/lib/heartbeat
 #%%attr(750,root,haclient) %dir /var/lib/heartbeat/api
 #%%attr(1770,root,haclient) %dir /var/lib/heartbeat/casual
@@ -228,12 +233,13 @@ fi
 #%%attr(755,root,haclient) %dir /var/lib/heartbeat/ckpt
 #%%attr(600,root,root) /var/lib/heartbeat/fifo
 %{_mandir}/man1/*.1*
-%{_mandir}/man8/*.8*
-%exclude %{_mandir}/man8/*ldirectord*.8*
+%{_mandir}/man8/[a-h]*.8*
 /var/lib/heartbeat/cores
 %attr(755,root,root) %{_bindir}/cl*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/authkeys
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/ha.cf
+%{_datadir}/snmp/mibs/*mib
 
 %files stonith
 %defattr(644,root,root,755)
@@ -242,9 +248,11 @@ fi
 %dir %{_libdir}/stonith/plugins
 %dir %{_libdir}/stonith/plugins/external
 %dir %{_libdir}/stonith/plugins/stonith2
-%attr(755,root,root) %{_libdir}/stonith/plugins/stonith2/*.so
+%attr(755,root,root) %{_libdir}/stonith/plugins/*/*
 %attr(755,root,root) %{_sbindir}/meatclient
 %attr(755,root,root) %{_sbindir}/stonith
+%{_mandir}/man8/stonith.8.gz
+%{_mandir}/man8/meatclient.8.gz
 
 %files ldirectord
 %defattr(644,root,root,755)
@@ -259,6 +267,12 @@ fi
 %defattr(644,root,root,755)
 %{_includedir}/*
 %{_libdir}/*.la
+%{perl_vendorarch}/heartbeat
+%dir %{perl_vendorarch}/auto/heartbeat
+%dir %{perl_vendorarch}/auto/heartbeat/cl_raw
+%{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.bs
+%attr(755,root,root) %{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.so
+%{_mandir}/man3/*
 
 %files static
 %defattr(644,root,root,755)
