@@ -82,15 +82,20 @@ STONITH (Shoot The Other Node In The Head) to interfejs s³u¿±cy do
 
 %package ldirectord
 Summary:	Monitor virtual services provided by LVS
-Summary(pl):	Demon monitoruj±cy wirtualne serwisy dostaczanych przez LVS
+Summary(pl):	Demon monitoruj±cy wirtualne us³ugi dostarczane poprzez LVS
 Group:		Applications/System
-PreReq:         rc-scripts
+PreReq:		rc-scripts
 Requires(post,preun):   /sbin/chkconfig
 Requires:	ipvsadm
 
 %description ldirectord
 ldirectord is a stand-alone daemon to monitor services of real
 for virtual services provided by The Linux Virtual Server
+(http://www.linuxvirtualserver.org/).
+
+%description ldirectord -l pl
+ldirectord to samodzielny demon monitoruj±cy rzeczywiste us³ugi dla
+wirtualnych us³ug dostarczanych poprzez Linux Virtual Server
 (http://www.linuxvirtualserver.org/).
 
 %package devel
@@ -211,7 +216,8 @@ fi
 %dir %{_libdir}/heartbeat/plugins
 %dir %{_libdir}/heartbeat/plugins/*
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/*/*.so
-%attr(755,root,root) %{_libdir}/heartbeat/*
+%attr(755,root,root) %{_libdir}/heartbeat/[!cp]*
+%attr(755,root,root) %{_libdir}/heartbeat/c[!t]*
 %dir %{_libdir}/pils
 %dir %{_libdir}/pils/plugins
 %dir %{_libdir}/pils/plugins/*
@@ -251,8 +257,8 @@ fi
 %attr(755,root,root) %{_libdir}/stonith/plugins/*/*
 %attr(755,root,root) %{_sbindir}/meatclient
 %attr(755,root,root) %{_sbindir}/stonith
-%{_mandir}/man8/stonith.8.gz
-%{_mandir}/man8/meatclient.8.gz
+%{_mandir}/man8/stonith.8*
+%{_mandir}/man8/meatclient.8*
 
 %files ldirectord
 %defattr(644,root,root,755)
@@ -267,11 +273,14 @@ fi
 %defattr(644,root,root,755)
 %{_includedir}/*
 %{_libdir}/*.la
+
+# perl-heartbeat
 %{perl_vendorarch}/heartbeat
 %dir %{perl_vendorarch}/auto/heartbeat
 %dir %{perl_vendorarch}/auto/heartbeat/cl_raw
 %{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.bs
 %attr(755,root,root) %{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.so
+# -devel or perl- ?
 %{_mandir}/man3/*
 
 %files static
