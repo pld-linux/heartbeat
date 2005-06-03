@@ -12,9 +12,10 @@ Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 # Source0-md5:	808dd7884954553515757af6ad6dedb2
 Source1:	%{name}.init
 Source2:	ldirectord.init
+Patch0:		%{name}-sh.patch
+Patch1:		%{name}-ipmi.patch
 URL:		http://linux-ha.org/
-BuildRequires:	OpenIPMI-devel >= 1.4
-BuildRequires:	OpenIPMI-devel < 2.0.0
+BuildRequires:	OpenIPMI-devel >= 2.0.0
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gdbm-devel
@@ -25,13 +26,13 @@ BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 BuildRequires:	libwrap-devel
 BuildRequires:	libxml2-devel
-BuildRequires:	net-snmp-devel
+BuildRequires:	net-snmp-devel >= 5.1
+BuildRequires:	perl-devel >= 1:5.8.1
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
-BuildRequires:	swig
-BuildRequires:	swig-perl
+BuildRequires:	swig >= 1.3.19
 PreReq:		rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
@@ -123,8 +124,22 @@ Heartbeat static libraries.
 %description -l static
 Biblioteki statyczne heartbeat.
 
+%package -n perl-heartbeat
+Summary:	Perl binding for Heartbeat
+Summary(pl):	Dowi±zania Perla dla Heartbeata
+Group:		Development/Languages/Perl
+Requires:	%{name} = %{version}-%{release}
+
+%description -n perl-heartbeat
+Perl binding for Heartbeat.
+
+%description -n perl-heartbeat -l pl
+Dowi±zania Perla dla Heartbeata.
+
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 rm -rf libltdl
 
@@ -219,6 +234,7 @@ fi
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/*/*.so
 %attr(755,root,root) %{_libdir}/heartbeat/[!cp]*
 %attr(755,root,root) %{_libdir}/heartbeat/c[!t]*
+%attr(755,root,root) %{_libdir}/heartbeat/p[!l]*
 %dir %{_libdir}/pils
 %dir %{_libdir}/pils/plugins
 %dir %{_libdir}/pils/plugins/*
@@ -275,15 +291,15 @@ fi
 %{_includedir}/*
 %{_libdir}/*.la
 
-# perl-heartbeat
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/*.a
+
+%files -n perl-heartbeat
+%defattr(644,root,root,755)
 %{perl_vendorarch}/heartbeat
 %dir %{perl_vendorarch}/auto/heartbeat
 %dir %{perl_vendorarch}/auto/heartbeat/cl_raw
 %{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.bs
 %attr(755,root,root) %{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.so
-# -devel or perl- ?
-%{_mandir}/man3/*
-
-%files static
-%defattr(644,root,root,755)
-%{_libdir}/*.a
+%{_mandir}/man3/heartbeat::*.3pm*
