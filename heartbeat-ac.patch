@@ -39,29 +39,3 @@
  
  AC_MSG_CHECKING(for the location of the lock directory)
  for TTY_LOCK_D in /var/lock /var/spool/lock /var/spool/locks
-@@ -1398,15 +1377,16 @@
- 
- dnl testing again makes the eventual output a little easier to read
- if test "${enable_crm}"  = "yes"; then
--    AC_OUTPUT(crm/Makefile				    \
--		  crm/common/Makefile			    \
--		  crm/cib/Makefile					\
--		  crm/crmd/Makefile					\
--		  crm/lrmd/Makefile					\
--		  crm/pengine/Makefile			    \
--		  crm/tengine/Makefile			    \
--		  crm/admin/Makefile			    \
--)
-+	:
-+dnl     AC_OUTPUT(crm/Makefile				    \
-+dnl 		  crm/common/Makefile			    \
-+dnl 		  crm/cib/Makefile					\
-+dnl 		  crm/crmd/Makefile					\
-+dnl 		  crm/lrmd/Makefile					\
-+dnl 		  crm/pengine/Makefile			    \
-+dnl 		  crm/tengine/Makefile			    \
-+dnl 		  crm/admin/Makefile			    \
-+dnl )
- dnl else
- dnl For when the CRM is manditory...
- dnl	if "${enable_crm}" = "no (libxml2 not found)"; then
