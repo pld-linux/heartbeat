@@ -14,6 +14,7 @@ Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-sh.patch
 Patch1:		%{name}-ipmi.patch
+Patch2:		%{name}-ac.patch
 URL:		http://linux-ha.org/
 BuildRequires:	OpenIPMI-devel >= 2.0.0
 BuildRequires:	autoconf
@@ -140,6 +141,7 @@ Dowi±zania Perla dla Heartbeata.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 rm -rf libltdl
 
