@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# heartbeat	Starts heartbeat.
+#
+# chkconfig:	345 40 60
+# description:	Heartbeat.
 
 HA_DIR=/etc/ha.d
 CONFIG=$HA_DIR/ha.cf
