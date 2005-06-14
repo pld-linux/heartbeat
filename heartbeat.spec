@@ -5,7 +5,7 @@ Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	1.99.5
-Release:	0.3
+Release:	0.4
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
@@ -15,6 +15,7 @@ Source2:	ldirectord.init
 Patch0:		%{name}-sh.patch
 Patch1:		%{name}-ipmi.patch
 Patch2:		%{name}-ac.patch
+Patch3:		%{name}-chld.patch
 URL:		http://linux-ha.org/
 BuildRequires:	OpenIPMI-devel >= 2.0.0
 BuildRequires:	autoconf
@@ -142,6 +143,7 @@ Dowi±zania Perla dla Heartbeata.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 rm -rf libltdl
 
