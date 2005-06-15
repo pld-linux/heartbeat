@@ -262,7 +262,8 @@ fi
 %{_mandir}/man1/*.1*
 %{_mandir}/man8/[a-h]*.8*
 /var/lib/heartbeat/cores
-%attr(755,root,root) %{_bindir}/cl*
+%attr(755,root,root) %{_bindir}/cl_respawn
+%attr(2755,root,haclient) %{_bindir}/cl_status
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/authkeys
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/ha.cf
