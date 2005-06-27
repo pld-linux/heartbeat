@@ -34,7 +34,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpm-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
-BuildRequires:	swig >= 1.3.19
+BuildRequires:	swig-perl >= 1.3.25
 PreReq:		rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
