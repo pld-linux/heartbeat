@@ -73,7 +73,7 @@ case "$1" in
 		msg_starting ha_logd
 		daemon $HA_BIN/ha_logd -d
 	else
-		msg_already_running "ha_logd" 
+		msg_already_running "ha_logd"
 	fi
 	#RunStartStop pre-start
 	msg_starting "High-Availability"
