@@ -1,11 +1,11 @@
-#%%include	/usr/lib/rpm/macros.perl
+%include	/usr/lib/rpm/macros.perl
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	2.0.2
-Release:	0.4
+Release:	0.5
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
@@ -15,7 +15,7 @@ Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
 Patch1:		%{name}-chld.patch
 URL:		http://linux-ha.org/
-BuildRequires:	OpenIPMI-devel >= 2.0.0
+BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gdbm-devel
@@ -30,8 +30,7 @@ BuildRequires:	lm_sensors-devel
 BuildRequires:	net-snmp-devel >= 5.1
 #BuildRequires:	perl-devel >= 1:5.8.1
 BuildRequires:	pkgconfig
-BuildRequires:	rpm-devel
-#BuildRequires:	rpm-perlprov
+BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	swig-perl >= 1.3.25
@@ -138,10 +137,20 @@ Perl binding for Heartbeat.
 %description -n perl-heartbeat -l pl
 Dowi±zania Perla dla Heartbeata.
 
+%package cts
+Summary:	Cluster Test Suite
+Summary(pl):	Zestaw testów klastra
+Group:		Applications/System
+Requires:	%{name} = %{version}-%{release}
+
+%description cts
+Cluster Test Suite for heartbeat.
+
+%description cts -l pl
+Zestaw testów klastra opartego o heartbeat.
+
 %prep
 %setup -q
-# Hack against new OpenIPMI (again)
-sed -i '358,401d' lib/plugins/stonith/ipmilan_command.c
 %patch0 -p1
 %patch1 -p1
 
@@ -154,6 +163,7 @@ rm -rf libltdl
 %{__automake}
 %configure \
 	PING=/bin/ping \
+	MAILCMD=/bin/mail \
 	MOUNT=/bin/mount \
 	FSCK=/sbin/fsck \
 	--with-initdir=/etc/rc.d/init.d \
@@ -169,6 +179,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT/var/run/heartbeat
 
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/ldirectord
 ln -sf %{_sbindir}/ldirectord $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/ldirectord
@@ -232,8 +243,6 @@ fi
 %doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,haresources,startstop}
 %attr(755,root,root) %{_libdir}/lib*.so.*.*.*
 %dir %{_libdir}/heartbeat
-%dir %{_libdir}/heartbeat/cts
-%attr(755,root,root) %{_libdir}/heartbeat/cts/*.py
 %dir %{_libdir}/heartbeat/plugins
 %dir %{_libdir}/heartbeat/plugins/*
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/*/*.so
@@ -254,6 +263,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
 %attr(755,root,root) %{_libdir}/ocf
 %dir /var/lib/heartbeat
+%dir /var/run/heartbeat
 #%%attr(750,root,haclient) %dir /var/lib/heartbeat/api
 #%%attr(1770,root,haclient) %dir /var/lib/heartbeat/casual
 #%%attr(755,hacluster,haclient) %dir /var/lib/heartbeat/ccm
@@ -310,3 +320,9 @@ fi
 #%%{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.bs
 #%%attr(755,root,root) %{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.so
 #%%{_mandir}/man3/heartbeat::*.3pm*
+
+%files cts
+%defattr(644,root,root,755)
+%doc cts/README
+%dir %{_libdir}/heartbeat/cts
+%attr(755,root,root) %{_libdir}/heartbeat/cts/*.py
