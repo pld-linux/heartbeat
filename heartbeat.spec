@@ -122,7 +122,7 @@ Requires:	%{name}-devel = %{version}-%{release}
 %description static
 Heartbeat static libraries.
 
-%description -l pl static
+%description static -l pl
 Biblioteki statyczne heartbeat.
 
 %package -n perl-heartbeat
