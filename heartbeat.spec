@@ -4,12 +4,12 @@ Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	2.0.4
-Release:	0.6
+Version:	2.0.5
+Release:	0.1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	659aae2365daea3a17e5a4a4ae0b0a3e
+# Source0-md5:	209228b2948cfa4762a3a66454c6cc35
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
