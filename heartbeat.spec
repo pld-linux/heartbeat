@@ -4,12 +4,12 @@ Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	2.0.5
+Version:	2.0.6
 Release:	0.1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	209228b2948cfa4762a3a66454c6cc35
+# Source0-md5:	15f0ded68b8b6ef0bf75ebd06c0cbb04
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
@@ -28,13 +28,11 @@ BuildRequires:	libwrap-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	lm_sensors-devel
 BuildRequires:	net-snmp-devel >= 5.1
-#BuildRequires:	perl-devel >= 1:5.8.1
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	swig-perl >= 1.3.25
-PreReq:		rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -43,6 +41,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(post,postun):	/sbin/ldconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
+Requires:	rc-scripts
 Requires:	syslogdaemon
 Provides:	group(haclient)
 Provides:	user(hacluster)
@@ -125,18 +124,6 @@ Heartbeat static libraries.
 %description static -l pl
 Biblioteki statyczne heartbeat.
 
-%package -n perl-heartbeat
-Summary:	Perl binding for Heartbeat
-Summary(pl):	Dowi±zania Perla dla Heartbeata
-Group:		Development/Languages/Perl
-Requires:	%{name} = %{version}-%{release}
-
-%description -n perl-heartbeat
-Perl binding for Heartbeat.
-
-%description -n perl-heartbeat -l pl
-Dowi±zania Perla dla Heartbeata.
-
 %package cts
 Summary:	Cluster Test Suite
 Summary(pl):	Zestaw testów klastra
@@ -169,7 +156,6 @@ rm -rf libltdl
 	--with-initdir=/etc/rc.d/init.d \
 	--enable-lrm \
 	--enable-crm \
-	--enable-perl-vendor \
 	--enable-snmp-subagent
 
 %{__make}
@@ -208,24 +194,12 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/ldconfig
 /sbin/chkconfig --add heartbeat
+%service %{name} restart
 
 %preun
-Uninstall_PPP_hack() {
-	file2hack=/etc/ppp/ip-up.local
-	echo "NOTE: Restoring /$file2hack"
-	MARKER="Heartbeat"
-	ed -s $file2hack <<-!EOF 2>/dev/null
-H
-g/ $MARKER\$/d
-w
-!EOF
-}
-
 if [ "$1" = "0" ]; then
+	%service -q %{name} stop
 	/sbin/chkconfig --del heartbeat
-	if [ ! -x /etc/ppp/ip-up.heart ]; then
-		Uninstall_PPP_hack
-	fi
 fi
 
 %postun
@@ -275,7 +249,7 @@ fi
 /var/lib/heartbeat/cores
 %attr(755,root,root) %{_bindir}/cl_respawn
 %attr(2755,root,haclient) %{_bindir}/cl_status
-%attr(755,root,root) %{_sbindir}/*
+%attr(755,root,root) %{_sbindir}/[a-i]*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/authkeys
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/ha.cf
@@ -311,16 +285,6 @@ fi
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/*.a
-
-%files -n perl-heartbeat
-%defattr(644,root,root,755)
-# Perl binding disappeared, temporary comment
-#%%{perl_vendorarch}/heartbeat
-#%%dir %{perl_vendorarch}/auto/heartbeat
-#%%dir %{perl_vendorarch}/auto/heartbeat/cl_raw
-#%%{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.bs
-#%%attr(755,root,root) %{perl_vendorarch}/auto/heartbeat/cl_raw/cl_raw.so
-#%%{_mandir}/man3/heartbeat::*.3pm*
 
 %files cts
 %defattr(644,root,root,755)
