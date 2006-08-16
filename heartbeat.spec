@@ -45,6 +45,8 @@ Requires:	rc-scripts
 Requires:	syslogdaemon
 Provides:	group(haclient)
 Provides:	user(hacluster)
+# disappeared
+Obsoletes:	perl-heartbeat
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
