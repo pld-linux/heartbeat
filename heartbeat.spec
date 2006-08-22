@@ -4,12 +4,12 @@ Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	2.0.6
+Version:	2.0.7
 Release:	0.1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	15f0ded68b8b6ef0bf75ebd06c0cbb04
+# Source0-md5:	41233e5097c42341bf2162806d4cb99c
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
@@ -32,6 +32,7 @@ BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	swig-perl >= 1.3.25
+BuildRequires:	swig-python >= 1.3.25
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -184,6 +185,8 @@ rm -f $RPM_BUILD_ROOT/etc/rc.d/init.d/ldirectord
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ldirectord
 install ldirectord/ldirectord.cf $RPM_BUILD_ROOT%{_sysconfdir}/ha.d
 
+%find_lang haclient
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -212,7 +215,7 @@ fi
 %post	stonith -p /sbin/ldconfig
 %postun	stonith -p /sbin/ldconfig
 
-%files
+%files -f haclient.lang
 %defattr(644,root,root,755)
 %doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,haresources,startstop}
 %attr(755,root,root) %{_libdir}/lib*.so.*.*.*
@@ -233,6 +236,7 @@ fi
 %{_sysconfdir}/ha.d/README.config
 %attr(755,root,root) %{_sysconfdir}/ha.d/harc
 %{_sysconfdir}/ha.d/shellfuncs
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/hbmgmtd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/heartbeat
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
 %attr(755,root,root) %{_libdir}/ocf
