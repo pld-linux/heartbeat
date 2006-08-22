@@ -13,7 +13,6 @@ Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
-Patch1:		%{name}-chld.patch
 URL:		http://linux-ha.org/
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
@@ -141,7 +140,6 @@ Zestaw testów klastra opartego o heartbeat.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 rm -rf libltdl
 
