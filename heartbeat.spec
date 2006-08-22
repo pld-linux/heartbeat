@@ -19,6 +19,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gdbm-devel
 BuildRequires:	glib2-devel
+BuildRequires:	gnutls-devel
 BuildRequires:	libnet-devel >= 1.1.0
 BuildRequires:	libltdl-devel
 BuildRequires:	libtool
@@ -27,7 +28,9 @@ BuildRequires:	libwrap-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	lm_sensors-devel
 BuildRequires:	net-snmp-devel >= 5.1
+BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
+BuildRequires:	python-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
@@ -156,8 +159,9 @@ rm -rf libltdl
 	MOUNT=/bin/mount \
 	FSCK=/sbin/fsck \
 	--with-initdir=/etc/rc.d/init.d \
-	--enable-lrm \
 	--enable-crm \
+	--enable-lrm \
+	--enable-mgmt \
 	--enable-snmp-subagent
 
 %{__make}
