@@ -76,6 +76,7 @@ bardziej skomplikowanych konfiguracji.
 Summary:	Provides an interface to Shoot The Other Node In The Head
 Summary(pl):	Interfejs do "odstrzelenia" drugiego wêz³a w klastrze
 Group:		Applications/System
+Requires:	OpenIPMI >= 2.0.3
 
 %description stonith
 Provides an interface to Shoot The Other Node In The Head.
