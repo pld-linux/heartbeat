@@ -1,0 +1,11 @@
+--- heartbeat-2.0.7/lib/clplumbing/cl_msg.c	2007-01-27 17:08:26.135301000 +0000
++++ heartbeat-2.0.7/lib/clplumbing/cl_msg.c~	2007-01-27 17:09:14.691011000 +0000
+@@ -225,7 +225,7 @@ list_cleanup(GList* list)
+ 
+ /* Create a new (empty) message */
+ struct ha_msg *
+-ha_msg_new(nfields)
++ha_msg_new(int nfields)
+ {
+ 	struct ha_msg *	ret;
+ 	int	nalloc;
