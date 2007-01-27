@@ -13,6 +13,7 @@ Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
+Patch1:		%{name}-type.patch
 URL:		http://linux-ha.org/
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
@@ -145,6 +146,7 @@ Zestaw testów klastra opartego o heartbeat.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 rm -rf libltdl
 
@@ -154,10 +156,12 @@ rm -rf libltdl
 %{__autoconf}
 %{__automake}
 %configure \
-	PING=/bin/ping \
+	FSCK=/sbin/fsck \
+	FUSER=/sbin/fuser \
+	IPTABLES=/usr/sbin/iptables \
 	MAILCMD=/bin/mail \
 	MOUNT=/bin/mount \
-	FSCK=/sbin/fsck \
+	PING=/bin/ping \
 	--with-initdir=/etc/rc.d/init.d \
 	--enable-crm \
 	--enable-lrm \
@@ -299,4 +303,5 @@ fi
 %defattr(644,root,root,755)
 %doc cts/README
 %dir %{_libdir}/heartbeat/cts
-%attr(755,root,root) %{_libdir}/heartbeat/cts/*.py
+%attr(755,root,root) %{_libdir}/heartbeat/cts/*.py[co]
+%attr(755,root,root) %{_libdir}/heartbeat/cts/*Dummy
