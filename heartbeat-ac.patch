@@ -39,3 +39,18 @@
  
  AC_MSG_CHECKING(for the location of the lock directory)
  for TTY_LOCK_D in /var/lock /var/spool/lock /var/spool/locks
+--- heartbeat-2.0.7/configure.in.orig	2006-08-08 14:41:54.000000000 +0200
++++ heartbeat-2.0.7/configure.in	2007-01-27 19:23:30.919741000 +0100
+@@ -1693,8 +1693,12 @@ dnl ************ printw ****************
+ 	      [
+ #if defined(HAVE_CURSES_H)
+ #  include <curses.h>
++#elif defined(HAVE_CURSES_CURSES_H)
++#  include <curses/curses.h>
+ #elif defined(HAVE_NCURSES_H)
+ #  include <ncurses.h>
++#elif defined(HAVE_NCURSES_NCURSES_H)
++#  include <ncurses/ncurses.h>
+ #endif
+ 	      ],
+ 	      [printw((const char *)"Test");]
