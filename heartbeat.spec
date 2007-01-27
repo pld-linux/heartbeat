@@ -4,12 +4,12 @@ Summary(es):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl):	Podsystem heartbeat dla systemów o podwy¿szonej niezawodno¶ci
 Summary(pt_BR):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	2.0.7
+Version:	2.0.8
 Release:	0.1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	41233e5097c42341bf2162806d4cb99c
+# Source0-md5:	39d7d12d2a7d5c98d1e3f8ae7977a3e6
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
@@ -28,6 +28,7 @@ BuildRequires:	libuuid-devel
 BuildRequires:	libwrap-devel
 BuildRequires:	libxml2-devel
 BuildRequires:	lm_sensors-devel
+BuildRequires:	ncurses-devel >= 5.4
 BuildRequires:	net-snmp-devel >= 5.1
 BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
@@ -226,7 +227,7 @@ fi
 
 %files -f haclient.lang
 %defattr(644,root,root,755)
-%doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,haresources,startstop}
+%doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,ha_logd.cf,haresources,startstop}
 %attr(755,root,root) %{_libdir}/lib*.so.*.*.*
 %dir %{_libdir}/heartbeat
 %dir %{_libdir}/heartbeat/plugins
@@ -248,7 +249,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/hbmgmtd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/heartbeat
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
-%attr(755,root,root) %{_libdir}/ocf
+%attr(755,root,root) %{_prefix}/lib/ocf
 %dir /var/lib/heartbeat
 %dir /var/run/heartbeat
 #%%attr(750,root,haclient) %dir /var/lib/heartbeat/api
@@ -263,6 +264,7 @@ fi
 %attr(755,root,root) %{_bindir}/cl_respawn
 %attr(2755,root,haclient) %{_bindir}/cl_status
 %attr(755,root,root) %{_sbindir}/[a-i]*
+%attr(755,root,root) %{_sbindir}/ocf-tester
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/authkeys
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/ha.cf
@@ -283,7 +285,6 @@ fi
 
 %files ldirectord
 %defattr(644,root,root,755)
-%dir %{_sysconfdir}/ha.d/conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/ldirectord.cf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/ldirectord
 %attr(754,root,root) /etc/rc.d/init.d/ldirectord
