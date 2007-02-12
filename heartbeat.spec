@@ -1,8 +1,8 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	Heartbeat - subsystem for High-Availability Linux
-Summary(es):	Subsistema heartbeat para Linux "High-Availability"
-Summary(pl):	Podsystem heartbeat dla systemÛw o podwyøszonej niezawodno∂ci
-Summary(pt_BR):	Implementa sistema de monitoraÁ„o (heartbeats) visando Alta Disponibilidade
+Summary(es.UTF-8):   Subsistema heartbeat para Linux "High-Availability"
+Summary(pl.UTF-8):   Podsystem heartbeat dla system√≥w o podwy≈ºszonej niezawodno≈õci
+Summary(pt_BR.UTF-8):   Implementa sistema de monitora√ß√£o (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	2.0.8
 Release:	0.1
@@ -64,35 +64,35 @@ larger configurations.
 It implements the following kinds of heartbeats:
  - Bidirectional Serial Rings ("raw" serial ports)
 
-%description -l es
-heartbeat es un sistema b·sico para Linux-HA. La funciÛn de este
-software es ejecutar scripts en la inicializaciÛn y al apagar las
-m·quinas que lo utilizan.
+%description -l es.UTF-8
+heartbeat es un sistema b√°sico para Linux-HA. La funci√≥n de este
+software es ejecutar scripts en la inicializaci√≥n y al apagar las
+m√°quinas que lo utilizan.
 
-%description -l pl
-heartbeat jest podstawowym podsystemem dla systemÛw o podwyøszonej
-dostÍpno∂ci budowanych w oparciu o Linuksa. Zajmuje siÍ uruchamianiem
-skryptÛw podczas startu i zamykania systemu. Ta wersja pakietu pozwala
-na przejmowanie adresÛw IP. Oprogramowanie dzia≥a poprawnie dla
-konfiguracji sk≥adaj±cej siÍ z 2 hostÛw, moøna je rÛwnieø stosowaÊ do
+%description -l pl.UTF-8
+heartbeat jest podstawowym podsystemem dla system√≥w o podwy≈ºszonej
+dostƒôpno≈õci budowanych w oparciu o Linuksa. Zajmuje siƒô uruchamianiem
+skrypt√≥w podczas startu i zamykania systemu. Ta wersja pakietu pozwala
+na przejmowanie adres√≥w IP. Oprogramowanie dzia≈Ça poprawnie dla
+konfiguracji sk≈ÇadajƒÖcej siƒô z 2 host√≥w, mo≈ºna je r√≥wnie≈º stosowaƒá do
 bardziej skomplikowanych konfiguracji.
 
 %package stonith
 Summary:	Provides an interface to Shoot The Other Node In The Head
-Summary(pl):	Interfejs do "odstrzelenia" drugiego wÍz≥a w klastrze
+Summary(pl.UTF-8):   Interfejs do "odstrzelenia" drugiego wƒôz≈Ça w klastrze
 Group:		Applications/System
 Requires:	OpenIPMI >= 2.0.3
 
 %description stonith
 Provides an interface to Shoot The Other Node In The Head.
 
-%description stonith -l pl
-STONITH (Shoot The Other Node In The Head) to interfejs s≥uø±cy do
-"odstrzelenia" drugiego wÍz≥a w klastrze.
+%description stonith -l pl.UTF-8
+STONITH (Shoot The Other Node In The Head) to interfejs s≈Çu≈ºƒÖcy do
+"odstrzelenia" drugiego wƒôz≈Ça w klastrze.
 
 %package ldirectord
 Summary:	Monitor virtual services provided by LVS
-Summary(pl):	Demon monitoruj±cy wirtualne us≥ugi dostarczane poprzez LVS
+Summary(pl.UTF-8):   Demon monitorujƒÖcy wirtualne us≈Çugi dostarczane poprzez LVS
 Group:		Applications/System
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
@@ -103,46 +103,46 @@ ldirectord is a stand-alone daemon to monitor services of real
 for virtual services provided by The Linux Virtual Server
 (http://www.linuxvirtualserver.org/).
 
-%description ldirectord -l pl
-ldirectord to samodzielny demon monitoruj±cy rzeczywiste us≥ugi dla
-wirtualnych us≥ug dostarczanych poprzez Linux Virtual Server
+%description ldirectord -l pl.UTF-8
+ldirectord to samodzielny demon monitorujƒÖcy rzeczywiste us≈Çugi dla
+wirtualnych us≈Çug dostarczanych poprzez Linux Virtual Server
 (http://www.linuxvirtualserver.org/).
 
 %package devel
 Summary:	Heartbeat developement header files and libraries
-Summary(pl):	Pliki nag≥Ûwkowe i biblioteki heartbeat
+Summary(pl.UTF-8):   Pliki nag≈Ç√≥wkowe i biblioteki heartbeat
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
 Heartbeat developement header files and libraries.
 
-%description devel -l pl
-Pliki nag≥Ûwkowe i biblioteki heartbeat.
+%description devel -l pl.UTF-8
+Pliki nag≈Ç√≥wkowe i biblioteki heartbeat.
 
 %package static
 Summary:	Heartbeat static libraries
-Summary(pl):	Biblioteki statyczne heartbeat
+Summary(pl.UTF-8):   Biblioteki statyczne heartbeat
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Heartbeat static libraries.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Biblioteki statyczne heartbeat.
 
 %package cts
 Summary:	Cluster Test Suite
-Summary(pl):	Zestaw testÛw klastra
+Summary(pl.UTF-8):   Zestaw test√≥w klastra
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 
 %description cts
 Cluster Test Suite for heartbeat.
 
-%description cts -l pl
-Zestaw testÛw klastra opartego o heartbeat.
+%description cts -l pl.UTF-8
+Zestaw test√≥w klastra opartego o heartbeat.
 
 %prep
 %setup -q
