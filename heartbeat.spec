@@ -1,8 +1,8 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	Heartbeat - subsystem for High-Availability Linux
-Summary(es.UTF-8):   Subsistema heartbeat para Linux "High-Availability"
-Summary(pl.UTF-8):   Podsystem heartbeat dla systemów o podwyższonej niezawodności
-Summary(pt_BR.UTF-8):   Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
+Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
+Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
+Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	2.0.8
 Release:	0.1
@@ -79,7 +79,7 @@ bardziej skomplikowanych konfiguracji.
 
 %package stonith
 Summary:	Provides an interface to Shoot The Other Node In The Head
-Summary(pl.UTF-8):   Interfejs do "odstrzelenia" drugiego węzła w klastrze
+Summary(pl.UTF-8):	Interfejs do "odstrzelenia" drugiego węzła w klastrze
 Group:		Applications/System
 Requires:	OpenIPMI >= 2.0.3
 
@@ -92,7 +92,7 @@ STONITH (Shoot The Other Node In The Head) to interfejs służący do
 
 %package ldirectord
 Summary:	Monitor virtual services provided by LVS
-Summary(pl.UTF-8):   Demon monitorujący wirtualne usługi dostarczane poprzez LVS
+Summary(pl.UTF-8):	Demon monitorujący wirtualne usługi dostarczane poprzez LVS
 Group:		Applications/System
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
@@ -110,7 +110,7 @@ wirtualnych usług dostarczanych poprzez Linux Virtual Server
 
 %package devel
 Summary:	Heartbeat developement header files and libraries
-Summary(pl.UTF-8):   Pliki nagłówkowe i biblioteki heartbeat
+Summary(pl.UTF-8):	Pliki nagłówkowe i biblioteki heartbeat
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
@@ -122,7 +122,7 @@ Pliki nagłówkowe i biblioteki heartbeat.
 
 %package static
 Summary:	Heartbeat static libraries
-Summary(pl.UTF-8):   Biblioteki statyczne heartbeat
+Summary(pl.UTF-8):	Biblioteki statyczne heartbeat
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
@@ -134,7 +134,7 @@ Biblioteki statyczne heartbeat.
 
 %package cts
 Summary:	Cluster Test Suite
-Summary(pl.UTF-8):   Zestaw testów klastra
+Summary(pl.UTF-8):	Zestaw testów klastra
 Group:		Applications/System
 Requires:	%{name} = %{version}-%{release}
 
