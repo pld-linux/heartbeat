@@ -159,7 +159,7 @@ rm -rf libltdl
 %{__automake}
 %configure \
 	FSCK=/sbin/fsck \
-	FUSER=/sbin/fuser \
+	FUSER=/bin/fuser \
 	IPTABLES=/usr/sbin/iptables \
 	MAILCMD=/bin/mail \
 	MOUNT=/bin/mount \
