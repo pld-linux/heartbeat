@@ -1,19 +1,25 @@
+#
+# TODO:
+#   - think how to handle /etc/ha.d/haresources file, which is v1 config file
+#   and should not exist if v2 configuration is enabled ("crm yes", default is
+#   "no").
+#
 %include	/usr/lib/rpm/macros.perl
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	2.0.8
-Release:	0.2
+Version:	2.1.2
+Release:	1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	39d7d12d2a7d5c98d1e3f8ae7977a3e6
+# Source0-md5:	56868ab82936b3f77deb777992c4a80d
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
-Patch1:		%{name}-type.patch
+Patch1:		%{name}-no_ipmilan_test.patch
 URL:		http://linux-ha.org/
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
@@ -54,6 +60,8 @@ Provides:	user(hacluster)
 # disappeared
 Obsoletes:	perl-heartbeat
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+%define		specflags	-fgnu89-inline
+%define           filterout_ld    -Wl,--as-needed
 
 %description
 heartbeat is a basic heartbeat subsystem for Linux-HA. It will run
@@ -145,6 +153,18 @@ Cluster Test Suite for heartbeat.
 %description cts -l pl.UTF-8
 Zestaw testów klastra opartego o heartbeat.
 
+%package gui
+Summary:	Heartbeat GUI
+Summary(pl.UTF-8):	Graficzny interfejs użytkownika dla heartbeat
+Group:		Applications/System
+Requires:	%{name} = %{version}-%{release}
+
+%description gui
+Graphical user interface for heartbeat.
+
+%description gui -l pl.UTF-8
+Graficzny interfejs użytkownika dla heartbeat.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -196,6 +216,14 @@ rm -f $RPM_BUILD_ROOT/etc/rc.d/init.d/ldirectord
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/ldirectord
 install ldirectord/ldirectord.cf $RPM_BUILD_ROOT%{_sysconfdir}/ha.d
 
+rm -f $RPM_BUILD_ROOT%{_datadir}/heartbeat/cts/README
+
+for tool in ha_logger hb_addnode hb_delnode hb_standby hb_takeover; do
+	ln -sf %{_libdir}/heartbeat/$tool $RPM_BUILD_ROOT%{_bindir} 
+done
+
+sed -i -e's, /%{_lib}/libpam.la, /usr/%{_lib}/libpam.la,g' $RPM_BUILD_ROOT%{_libdir}/*.la
+
 %find_lang haclient
 
 %clean
@@ -240,10 +268,22 @@ fi
 %dir %{_libdir}/pils
 %dir %{_libdir}/pils/plugins
 %dir %{_libdir}/pils/plugins/*
+%dir %{_datadir}/heartbeat
+%attr(755,root,root) %{_datadir}/heartbeat/BasicSanityCheck
+%attr(755,root,root) %{_datadir}/heartbeat/ResourceManager
+%attr(755,root,root) %{_datadir}/heartbeat/SNMPAgentSanityCheck
+%attr(755,root,root) %{_datadir}/heartbeat/TestHeartbeatComm
+%attr(755,root,root) %{_datadir}/heartbeat/ha_*
+%attr(755,root,root) %{_datadir}/heartbeat/hb_*
+%attr(755,root,root) %{_datadir}/heartbeat/lrmtest
+%attr(755,root,root) %{_datadir}/heartbeat/mach_down
+%attr(755,root,root) %{_datadir}/heartbeat/req_resource
+%{_datadir}/heartbeat/crm.dtd
 %attr(755,root,root) %{_libdir}/pils/plugins/*/*.so
 %dir %{_sysconfdir}/ha.d
 %attr(755,root,root) %{_sysconfdir}/ha.d/rc.d
 %attr(755,root,root) %{_sysconfdir}/ha.d/resource.d
+%exclude %{_sysconfdir}/ha.d/resource.d/ldirectord
 %{_sysconfdir}/ha.d/README.config
 %attr(755,root,root) %{_sysconfdir}/ha.d/harc
 %{_sysconfdir}/ha.d/shellfuncs
@@ -251,20 +291,31 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/heartbeat
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
 %attr(755,root,root) %{_prefix}/lib/ocf
-%dir /var/lib/heartbeat
 %dir /var/run/heartbeat
-#%%attr(750,root,haclient) %dir /var/lib/heartbeat/api
-#%%attr(1770,root,haclient) %dir /var/lib/heartbeat/casual
-#%%attr(755,hacluster,haclient) %dir /var/lib/heartbeat/ccm
-#%%attr(755,root,haclient) %dir /var/lib/heartbeat/ccm
-#%%attr(755,root,haclient) %dir /var/lib/heartbeat/ckpt
-#%%attr(600,root,root) /var/lib/heartbeat/fifo
+%attr(750,hacluster,haclient) %dir /var/run/heartbeat/ccm
+%attr(750,hacluster,haclient) %dir /var/run/heartbeat/crm
+%dir /var/lib/heartbeat
+%attr(770,root,haclient) %dir /var/lib/heartbeat/lrm
+%attr(770,root,haclient) %dir /var/lib/heartbeat/mgmt
+%attr(750,hacluster,haclient) %dir /var/lib/heartbeat/pengine
+%attr(750,hacluster,haclient) %dir /var/lib/heartbeat/crm
+%attr(750,root,haclient) %dir /var/lib/heartbeat/fencing
+%attr(711,root,root) %dir /var/lib/heartbeat/cores
+%attr(700,root,root) %dir /var/lib/heartbeat/cores/root
+# we don't want any files owned by nobody
+%attr(700,root,root) %dir /var/lib/heartbeat/cores/nobody
+%attr(700,hacluster,root) %dir /var/lib/heartbeat/cores/hacluster
 %{_mandir}/man1/*.1*
 %{_mandir}/man8/[a-h]*.8*
-/var/lib/heartbeat/cores
 %attr(755,root,root) %{_bindir}/cl_respawn
 %attr(2755,root,haclient) %{_bindir}/cl_status
+%attr(755,root,root) %{_bindir}/ha_logger
+%attr(755,root,root) %{_bindir}/hb_addnode
+%attr(755,root,root) %{_bindir}/hb_delnode
+%attr(755,root,root) %{_bindir}/hb_standby
+%attr(755,root,root) %{_bindir}/hb_takeover
 %attr(755,root,root) %{_sbindir}/[a-i]*
+%attr(755,root,root) %{_sbindir}/ptest
 %attr(755,root,root) %{_sbindir}/ocf-tester
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/authkeys
@@ -273,7 +324,6 @@ fi
 
 %files stonith
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libstonith.so.*.*.*
 %dir %{_libdir}/stonith
 %dir %{_libdir}/stonith/plugins
 %dir %{_libdir}/stonith/plugins/external
@@ -281,6 +331,8 @@ fi
 %attr(755,root,root) %{_libdir}/stonith/plugins/*/*
 %attr(755,root,root) %{_sbindir}/meatclient
 %attr(755,root,root) %{_sbindir}/stonith
+%dir %{_datadir}/heartbeat/stonithdtest
+%attr(755,root,root) %{_datadir}/heartbeat/stonithdtest/STONITHDBasicSanityCheck
 %{_mandir}/man8/stonith.8*
 %{_mandir}/man8/meatclient.8*
 
@@ -288,6 +340,7 @@ fi
 %defattr(644,root,root,755)
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/ldirectord.cf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/ldirectord
+%attr(755,root,root) %{_sysconfdir}/ha.d/resource.d/ldirectord
 %attr(754,root,root) /etc/rc.d/init.d/ldirectord
 %attr(755,root,root) %{_sbindir}/*ldirectord*
 %{_mandir}/man8/*ldirectord*.8*
@@ -304,6 +357,21 @@ fi
 %files cts
 %defattr(644,root,root,755)
 %doc cts/README
-%dir %{_libdir}/heartbeat/cts
-%attr(755,root,root) %{_libdir}/heartbeat/cts/*.py[co]
-%attr(755,root,root) %{_libdir}/heartbeat/cts/*Dummy
+%dir %{_datadir}/heartbeat/cts
+%attr(755,root,root) %{_datadir}/heartbeat/cts/*.py
+%{_datadir}/heartbeat/cts/*.py[co]
+%attr(755,root,root) %{_datadir}/heartbeat/cts/*.sh
+%attr(755,root,root) %{_datadir}/heartbeat/cts/*Dummy
+
+%files gui
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/hb_gui
+%dir %{_libdir}/heartbeat-gui
+%attr(755,root,root) %{_libdir}/heartbeat-gui/*.so.*
+%{_libdir}/heartbeat-gui/*.a
+%{_libdir}/heartbeat-gui/*.la
+%attr(755,root,root) %{_libdir}/heartbeat-gui/*.py
+%dir %{_datadir}/heartbeat-gui
+%{_datadir}/heartbeat-gui/*.png
+%attr(755,root,root) %{_datadir}/heartbeat-gui/*.py
+%{_datadir}/heartbeat-gui/haclient.glade
