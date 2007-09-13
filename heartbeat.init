@@ -71,10 +71,7 @@ if [  -f $HA_DIR/resource.d/startstop ]; then
 fi
 }
 
-RETVAL=0
-
-case "$1" in
-  start)
+start() {
 	$HA_BIN/ha_logd -s 2>&1 >/dev/null
 	if [ $? -ne 0 ]; then
 		msg_starting ha_logd
@@ -102,16 +99,9 @@ case "$1" in
 		RETVAL=$?
 		RunStartStop post-start $RETVAL
 	fi
-	;;
-  standby)
-	StandbyHA
-	RETVAL=$?
-	;;
-  status)
-	$HA_BIN/heartbeat -s
-	RETVAL=$?
-	;;
-  stop)
+}
+
+stop() {
 	RunStartStop "pre-stop"
 	$HA_BIN/heartbeat -s 2>&1 >/dev/null
 	if [ $? -eq 0 ]; then
@@ -129,10 +119,27 @@ case "$1" in
 		msg_not_running ha_logd
 	fi
 	rm -f /var/lock/subsys/heartbeat 2>/dev/null
+}
+
+RETVAL=0
+case "$1" in
+  start)
+  	start
+	;;
+  standby)
+	StandbyHA
+	RETVAL=$?
+	;;
+  status)
+	$HA_BIN/heartbeat -s
+	RETVAL=$?
+	;;
+  stop)
+  	stop
 	;;
   restart)
-	$0 stop
-	$0 start
+	stop
+	start
 	;;
   force-reload|reload)
 	msg_reloading "Heartbeat"
