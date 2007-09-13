@@ -20,6 +20,14 @@ if [ ! -f $CONFIG ]; then
 	exit 1
 fi
 
+CrmEnabled() {
+	case `ha_parameter crm | tr '[A-Z]' '[a-z]'` in
+		y|yes|enable|on|true|1|manual)      
+			true;;
+		*)
+			false;;
+	esac
+}
 
 StandbyHA() {
   auto_failback=`ha_parameter auto_failback | tr 'A-Z' 'a-z'`
@@ -40,20 +48,19 @@ StandbyHA() {
 
   echo "auto_failback: $auto_failback"
   if
-    StatusHA >/dev/null 2>&1
+    $HA_BIN/heartbeat -s >/dev/null 2>&1
   then
-    EchoNoNl "Attempting to enter standby mode"
+    show "Attempting to enter standby mode" ; busy
     if
       $HA_BIN/hb_standby
     then
       # It's impossible to tell how long this will take.
-      echo
+      started
     else
-      echo_failure $?
+      fail
     fi
   else
-    Echo "Heartbeat is not currently running."
-    exit 1
+    msg_not_running heartbeat
   fi
 }
 
@@ -75,24 +82,37 @@ case "$1" in
 	else
 		msg_already_running "ha_logd"
 	fi
-	#RunStartStop pre-start
-	msg_starting "High-Availability"
-	daemon $HA_BIN/ResourceManager verifyallidle
-	msg_starting "Heartbeat"
-	daemon $HA_BIN/heartbeat 2>&1
-	RETVAL=$?
-	#RunStartStop post-start $RETVAL
+	if $HA_BIN/heartbeat -s 2>&1 >/dev/null; then 
+		msg_already_running "Heartbeat"
+	else
+		RunStartStop pre-start
+		if ! CrmEnabled ; then
+			$HA_NOARCHBIN/ResourceManager verifyallidle
+		fi
+		for d in /var/run/heartbeat/{crm,ccm} ; do
+			if ! [ -d $d ] ; then
+				mkdir -p $d
+				chown hacluster:haclient $d
+				chmod 750 $d
+			fi
+		done
+		msg_starting "Heartbeat"
+		daemon $HA_BIN/heartbeat 2>&1
+		touch /var/lock/subsys/heartbeat
+		RETVAL=$?
+		RunStartStop post-start $RETVAL
+	fi
 	;;
   standby)
 	StandbyHA
 	RETVAL=$?
 	;;
   status)
-	status $HA_BIN/heartbeat -s
+	$HA_BIN/heartbeat -s
 	RETVAL=$?
 	;;
   stop)
-	#RunStartStop "pre-stop"
+	RunStartStop "pre-stop"
 	$HA_BIN/heartbeat -s 2>&1 >/dev/null
 	if [ $? -eq 0 ]; then
 		msg_stopping "Heartbeat"
@@ -100,21 +120,22 @@ case "$1" in
         else
 		msg_not_running heartbeat
         fi
-        #RunStartStop post-stop $RETVAL
+        RunStartStop post-stop $RETVAL
 	$HA_BIN/ha_logd -s 2>&1 >/dev/null
 	if [ $? -eq 0 ]; then
 		msg_stopping ha_logd
-		daemon $HA_BIN/ha_logd -k
+		killproc ha_logd
 	else
 		msg_not_running ha_logd
 	fi
+	rm -f /var/lock/subsys/heartbeat 2>/dev/null
 	;;
   restart)
 	$0 stop
 	$0 start
 	;;
   force-reload|reload)
-	msg_reloading "High-Availability"
+	msg_reloading "Heartbeat"
 	daemon $HA_BIN/heartbeat -r
 	RETVAL=$?
 	;;
