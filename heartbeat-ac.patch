@@ -1,0 +1,56 @@
+--- heartbeat-1.2.0/configure.in.orig	Tue Feb 17 06:50:30 2004
++++ heartbeat-1.2.0/configure.in	Tue Mar 16 13:36:09 2004
+@@ -258,18 +258,7 @@
+ dnl Determine if we use -w1 or -t1 for ping (in PYTHON Scripts)
+ 
+ 
+-AC_MSG_CHECKING(ping option for timeout - w or t)
+-for PING_TIMEOUT_OPT in "-w1" "-t1"
+-do
+-  $PING -nq -c1 $PING_TIMEOUT_OPT localhost > /dev/null 2>&1
+-  if
+-    test "$?" = 0
+-  then
+-    AC_DEFINE_UNQUOTED(PING_TIMEOUT_OPT, "$PING_TIMEOUT_OPT", option for ping timeout)
+-    AC_MSG_RESULT($PING_TIMEOUT_OPT)
+-    break
+-  fi
+-done
++PING_TIMEOUT_OPT="-w1"
+ AC_SUBST(PING_TIMEOUT_OPT)
+ 
+ dnl Determining a route (particularly for "findif").
+@@ -286,17 +275,7 @@
+ 
+ 
+ AC_MSG_CHECKING(ifconfig option to list interfaces)
+-for IFCONFIG_A_OPT in "" "-A" "-a"
+-do
+-  $IFCONFIG $IFCONFIG_A_OPT > /dev/null 2>&1
+-  if
+-    test "$?" = 0
+-  then
+-    AC_DEFINE_UNQUOTED(IFCONFIG_A_OPT, "$IFCONFIG_A_OPT", option for ifconfig command)
+-    AC_MSG_RESULT($IFCONFIG_A_OPT)
+-    break
+-  fi
+-done
++IFCONFIG_A_OPT=""
+ 
+ AC_MSG_CHECKING(for the location of the lock directory)
+ for TTY_LOCK_D in /var/lock /var/spool/lock /var/spool/locks
+--- heartbeat-2.0.7/configure.in.orig	2006-08-08 14:41:54.000000000 +0200
++++ heartbeat-2.0.7/configure.in	2007-01-27 19:23:30.919741000 +0100
+@@ -1693,8 +1693,12 @@ dnl ************ printw ****************
+ 	      [
+ #if defined(HAVE_CURSES_H)
+ #  include <curses.h>
++#elif defined(HAVE_CURSES_CURSES_H)
++#  include <curses/curses.h>
+ #elif defined(HAVE_NCURSES_H)
+ #  include <ncurses.h>
++#elif defined(HAVE_NCURSES_NCURSES_H)
++#  include <ncurses/ncurses.h>
+ #endif
+ 	      ],
+ 	      [printw((const char *)"Test");]
