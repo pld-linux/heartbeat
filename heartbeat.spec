@@ -61,7 +61,6 @@ Provides:	user(hacluster)
 Obsoletes:	perl-heartbeat
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		specflags		-fgnu89-inline
 %define		filterout_ld	-Wl,--as-needed
 
 %description
