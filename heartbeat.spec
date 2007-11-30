@@ -27,8 +27,8 @@ BuildRequires:	automake
 BuildRequires:	gdbm-devel
 BuildRequires:	glib2-devel
 BuildRequires:	gnutls-devel
-BuildRequires:	libnet-devel >= 1.1.0
 BuildRequires:	libltdl-devel
+BuildRequires:	libnet-devel >= 1.1.0
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 BuildRequires:	libwrap-devel
@@ -44,14 +44,14 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	swig-perl >= 1.3.25
 BuildRequires:	swig-python >= 1.3.25
+Requires(post,postun):	/sbin/ldconfig
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(post,preun):	/sbin/chkconfig
-Requires(post,postun):	/sbin/ldconfig
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
 Requires:	psmisc >= 22.5-2
 Requires:	rc-scripts
 Requires:	syslogdaemon
@@ -60,8 +60,9 @@ Provides:	user(hacluster)
 # disappeared
 Obsoletes:	perl-heartbeat
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-%define		specflags	-fgnu89-inline
-%define           filterout_ld    -Wl,--as-needed
+
+%define		specflags		-fgnu89-inline
+%define		filterout_ld	-Wl,--as-needed
 
 %description
 heartbeat is a basic heartbeat subsystem for Linux-HA. It will run
@@ -103,13 +104,13 @@ STONITH (Shoot The Other Node In The Head) to interfejs służący do
 Summary:	Monitor virtual services provided by LVS
 Summary(pl.UTF-8):	Demon monitorujący wirtualne usługi dostarczane poprzez LVS
 Group:		Applications/System
-PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
 Requires:	ipvsadm
+Requires:	rc-scripts
 
 %description ldirectord
-ldirectord is a stand-alone daemon to monitor services of real
-for virtual services provided by The Linux Virtual Server
+ldirectord is a stand-alone daemon to monitor services of real for
+virtual services provided by The Linux Virtual Server
 (http://www.linuxvirtualserver.org/).
 
 %description ldirectord -l pl.UTF-8
@@ -219,7 +220,7 @@ install ldirectord/ldirectord.cf $RPM_BUILD_ROOT%{_sysconfdir}/ha.d
 rm -f $RPM_BUILD_ROOT%{_datadir}/heartbeat/cts/README
 
 for tool in ha_logger hb_addnode hb_delnode hb_standby hb_takeover; do
-	ln -sf %{_libdir}/heartbeat/$tool $RPM_BUILD_ROOT%{_bindir} 
+	ln -sf %{_libdir}/heartbeat/$tool $RPM_BUILD_ROOT%{_bindir}
 done
 
 sed -i -e's, /%{_lib}/libpam.la, /usr/%{_lib}/libpam.la,g' $RPM_BUILD_ROOT%{_libdir}/*.la
