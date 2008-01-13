@@ -15,7 +15,7 @@ Release:	1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	23d5e0f750b098ecdbd2d83fc6a08abe
+# Source0-md5:	bca53530a3802f7677772323047405cd
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
