@@ -10,12 +10,12 @@ Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	2.1.2
+Version:	2.1.3
 Release:	1
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	56868ab82936b3f77deb777992c4a80d
+# Source0-md5:	bca53530a3802f7677772323047405cd
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
@@ -256,7 +256,7 @@ fi
 
 %files -f haclient.lang
 %defattr(644,root,root,755)
-%doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,ha_logd.cf,haresources,startstop}
+%doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,logd.cf,haresources,startstop}
 %attr(755,root,root) %{_libdir}/lib*.so.*.*.*
 %dir %{_libdir}/heartbeat
 %dir %{_libdir}/heartbeat/plugins
@@ -278,6 +278,7 @@ fi
 %attr(755,root,root) %{_datadir}/heartbeat/lrmtest
 %attr(755,root,root) %{_datadir}/heartbeat/mach_down
 %attr(755,root,root) %{_datadir}/heartbeat/req_resource
+%attr(755,root,root) %{_datadir}/heartbeat/utillib.sh
 %{_datadir}/heartbeat/crm.dtd
 %attr(755,root,root) %{_libdir}/pils/plugins/*/*.so
 %dir %{_sysconfdir}/ha.d
