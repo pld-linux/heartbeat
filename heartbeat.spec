@@ -11,16 +11,16 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	2.1.3
-Release:	1
+Release:	4
 License:	GPL v2+
 Group:		Applications/System
-Source0:	http://linux-ha.org/download/%{name}-%{version}.tar.gz
+Source0:	http://www.linux-ha.org/download/%{name}-%{version}.tar.gz
 # Source0-md5:	bca53530a3802f7677772323047405cd
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
 Patch1:		%{name}-no_ipmilan_test.patch
-URL:		http://linux-ha.org/
+URL:		http://www.linux-ha.org/Heartbeat
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -186,6 +186,7 @@ rm -rf libltdl
 	MOUNT=/bin/mount \
 	PING=/bin/ping \
 	--with-initdir=/etc/rc.d/init.d \
+	--enable-fatal-warnings=no \
 	--enable-crm \
 	--enable-lrm \
 	--enable-mgmt \
@@ -258,7 +259,48 @@ fi
 %files -f haclient.lang
 %defattr(644,root,root,755)
 %doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,logd.cf,haresources,startstop}
-%attr(755,root,root) %{_libdir}/lib*.so.*.*.*
+%attr(755,root,root) %{_libdir}/libapphb.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libapphb.so.0
+%attr(755,root,root) %{_libdir}/libccmclient.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libccmclient.so.1
+%attr(755,root,root) %{_libdir}/libcib.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libcib.so.1
+%attr(755,root,root) %{_libdir}/libclm.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libclm.so.1
+%attr(755,root,root) %{_libdir}/libcrmcommon.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libcrmcommon.so.1
+%attr(755,root,root) %{_libdir}/libhbclient.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libhbclient.so.1
+%attr(755,root,root) %{_libdir}/libhbmgmt.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libhbmgmt.so.0
+%attr(755,root,root) %{_libdir}/libhbmgmtclient.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libhbmgmtclient.so.0
+%attr(755,root,root) %{_libdir}/libhbmgmtcommon.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libhbmgmtcommon.so.0
+%attr(755,root,root) %{_libdir}/libhbmgmttls.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libhbmgmttls.so.0
+%attr(755,root,root) %{_libdir}/liblrm.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/liblrm.so.0
+%attr(755,root,root) %{_libdir}/libpe_rules.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpe_rules.so.2
+%attr(755,root,root) %{_libdir}/libpe_status.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpe_status.so.2
+%attr(755,root,root) %{_libdir}/libpengine.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpengine.so.3
+%attr(755,root,root) %{_libdir}/libpils.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpils.so.1
+%attr(755,root,root) %{_libdir}/libplumb.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libplumb.so.1
+%attr(755,root,root) %{_libdir}/libplumbgpl.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libplumbgpl.so.1
+%attr(755,root,root) %{_libdir}/librecoverymgr.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/librecoverymgr.so.1
+%attr(755,root,root) %{_libdir}/libstonith.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libstonith.so.1
+%attr(755,root,root) %{_libdir}/libstonithd.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libstonithd.so.0
+%attr(755,root,root) %{_libdir}/libtransitioner.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libtransitioner.so.1
 %dir %{_libdir}/heartbeat
 %dir %{_libdir}/heartbeat/plugins
 %dir %{_libdir}/heartbeat/plugins/*
@@ -350,6 +392,7 @@ fi
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/*
+%attr(755,root,root) %{_libdir}/lib*.so
 %{_libdir}/*.la
 
 %files static
