@@ -11,7 +11,7 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	2.1.3
-Release:	6
+Release:	7
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://www.linux-ha.org/download/%{name}-%{version}.tar.gz
@@ -413,6 +413,7 @@ fi
 %attr(755,root,root) %{_bindir}/hb_gui
 %dir %{_libdir}/heartbeat-gui
 %attr(755,root,root) %{_libdir}/heartbeat-gui/*.so.*
+%attr(755,root,root) %{_libdir}/heartbeat-gui/_pymgmt.so
 %{_libdir}/heartbeat-gui/*.a
 %{_libdir}/heartbeat-gui/*.la
 %attr(755,root,root) %{_libdir}/heartbeat-gui/*.py
