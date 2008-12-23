@@ -55,6 +55,7 @@ Requires(pre):	/usr/sbin/useradd
 Requires:	psmisc >= 22.5-2
 Requires:	rc-scripts
 Requires:	syslogdaemon
+Requires:	which
 Provides:	group(haclient)
 Provides:	user(hacluster)
 # disappeared
