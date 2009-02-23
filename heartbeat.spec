@@ -11,7 +11,7 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	2.1.3
-Release:	7
+Release:	8
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://www.linux-ha.org/download/%{name}-%{version}.tar.gz
