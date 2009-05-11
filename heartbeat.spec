@@ -10,12 +10,12 @@ Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	2.1.3
-Release:	9
+Version:	2.1.4
+Release:	1
 License:	GPL v2+
 Group:		Applications/System
-Source0:	http://www.linux-ha.org/download/%{name}-%{version}.tar.gz
-# Source0-md5:	bca53530a3802f7677772323047405cd
+Source0:	http://hg.linux-ha.org/lha-2.1/archive/STABLE-%{version}.tar.bz2
+# Source0-md5:	021dd61c78754ecedef94dae5cf922d0
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
@@ -169,7 +169,7 @@ Graphical user interface for heartbeat.
 Graficzny interfejs użytkownika dla heartbeat.
 
 %prep
-%setup -q
+%setup -qn Heartbeat-STABLE-2-1-STABLE-%{version}
 %patch0 -p1
 %patch1 -p1
 
@@ -179,6 +179,7 @@ rm -rf libltdl
 %{__libtoolize} --ltdl
 %{__aclocal}
 %{__autoconf}
+%{__autoheader}
 %{__automake}
 %configure \
 	FSCK=/sbin/fsck \
@@ -325,6 +326,7 @@ fi
 %attr(755,root,root) %{_datadir}/heartbeat/req_resource
 %attr(755,root,root) %{_datadir}/heartbeat/utillib.sh
 %{_datadir}/heartbeat/crm.dtd
+%{_datadir}/heartbeat/ra-api-1.dtd
 %attr(755,root,root) %{_libdir}/pils/plugins/*/*.so
 %dir %{_sysconfdir}/ha.d
 %attr(755,root,root) %{_sysconfdir}/ha.d/rc.d
@@ -375,6 +377,7 @@ fi
 %dir %{_libdir}/stonith/plugins/external
 %dir %{_libdir}/stonith/plugins/stonith2
 %attr(755,root,root) %{_libdir}/stonith/plugins/*/*
+%attr(755,root,root) %{_libdir}/stonith/plugins/xen0-ha-dom0-stonith-helper
 %attr(755,root,root) %{_sbindir}/meatclient
 %attr(755,root,root) %{_sbindir}/stonith
 %dir %{_datadir}/heartbeat/stonithdtest
@@ -404,6 +407,7 @@ fi
 %files cts
 %defattr(644,root,root,755)
 %doc cts/README
+%{_libdir}/heartbeat/cts
 %dir %{_datadir}/heartbeat/cts
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*.py
 %{_datadir}/heartbeat/cts/*.py[co]
