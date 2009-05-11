@@ -1,21 +1,16 @@
 #
-# TODO:
-#   - think how to handle /etc/ha.d/haresources file, which is v1 config file
-#   and should not exist if v2 configuration is enabled ("crm yes", default is
-#   "no").
-#
 %include	/usr/lib/rpm/macros.perl
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	2.1.4
-Release:	1
+Version:	2.99.2
+Release:	0.1
 License:	GPL v2+
 Group:		Applications/System
-Source0:	http://hg.linux-ha.org/lha-2.1/archive/STABLE-%{version}.tar.bz2
-# Source0-md5:	021dd61c78754ecedef94dae5cf922d0
+Source0:	http://hg.linux-ha.org/dev/archive/beta-%{version}.tar.bz2
+# Source0-md5:	ef79dc10100451bfcbb55b4707d28eb1
 Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
@@ -156,20 +151,8 @@ Cluster Test Suite for heartbeat.
 %description cts -l pl.UTF-8
 Zestaw testów klastra opartego o heartbeat.
 
-%package gui
-Summary:	Heartbeat GUI
-Summary(pl.UTF-8):	Graficzny interfejs użytkownika dla heartbeat
-Group:		Applications/System
-Requires:	%{name} = %{version}-%{release}
-
-%description gui
-Graphical user interface for heartbeat.
-
-%description gui -l pl.UTF-8
-Graficzny interfejs użytkownika dla heartbeat.
-
 %prep
-%setup -qn Heartbeat-STABLE-2-1-STABLE-%{version}
+%setup -qn Linux-HA-Dev-beta-%{version}
 %patch0 -p1
 %patch1 -p1
 
@@ -190,9 +173,8 @@ rm -rf libltdl
 	PING=/bin/ping \
 	--with-initdir=/etc/rc.d/init.d \
 	--enable-fatal-warnings=no \
-	--enable-crm \
-	--enable-lrm \
 	--enable-mgmt \
+	--enable-quorumd \
 	--enable-snmp-subagent
 
 %{__make}
@@ -229,8 +211,6 @@ done
 
 sed -i -e's, /%{_lib}/libpam.la, /usr/%{_lib}/libpam.la,g' $RPM_BUILD_ROOT%{_libdir}/*.la
 
-%find_lang haclient
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -259,65 +239,39 @@ fi
 %post	stonith -p /sbin/ldconfig
 %postun	stonith -p /sbin/ldconfig
 
-%files -f haclient.lang
+%files
 %defattr(644,root,root,755)
 %doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,logd.cf,haresources,startstop}
 %attr(755,root,root) %{_libdir}/libapphb.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libapphb.so.0
+%attr(755,root,root) %ghost %{_libdir}/libapphb.so.2
 %attr(755,root,root) %{_libdir}/libccmclient.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libccmclient.so.1
-%attr(755,root,root) %{_libdir}/libcib.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcib.so.1
 %attr(755,root,root) %{_libdir}/libclm.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libclm.so.1
-%attr(755,root,root) %{_libdir}/libcrmcommon.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcrmcommon.so.1
 %attr(755,root,root) %{_libdir}/libhbclient.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libhbclient.so.1
-%attr(755,root,root) %{_libdir}/libhbmgmt.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libhbmgmt.so.0
-%attr(755,root,root) %{_libdir}/libhbmgmtclient.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libhbmgmtclient.so.0
-%attr(755,root,root) %{_libdir}/libhbmgmtcommon.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libhbmgmtcommon.so.0
-%attr(755,root,root) %{_libdir}/libhbmgmttls.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libhbmgmttls.so.0
 %attr(755,root,root) %{_libdir}/liblrm.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/liblrm.so.0
-%attr(755,root,root) %{_libdir}/libpe_rules.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpe_rules.so.2
-%attr(755,root,root) %{_libdir}/libpe_status.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpe_status.so.2
-%attr(755,root,root) %{_libdir}/libpengine.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpengine.so.3
+%attr(755,root,root) %ghost %{_libdir}/liblrm.so.2
 %attr(755,root,root) %{_libdir}/libpils.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpils.so.1
+%attr(755,root,root) %ghost %{_libdir}/libpils.so.2
 %attr(755,root,root) %{_libdir}/libplumb.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libplumb.so.1
+%attr(755,root,root) %ghost %{_libdir}/libplumb.so.2
 %attr(755,root,root) %{_libdir}/libplumbgpl.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libplumbgpl.so.1
-%attr(755,root,root) %{_libdir}/librecoverymgr.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/librecoverymgr.so.1
+%attr(755,root,root) %ghost %{_libdir}/libplumbgpl.so.2
 %attr(755,root,root) %{_libdir}/libstonith.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libstonith.so.1
-%attr(755,root,root) %{_libdir}/libstonithd.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libstonithd.so.0
-%attr(755,root,root) %{_libdir}/libtransitioner.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libtransitioner.so.1
 %dir %{_libdir}/heartbeat
 %dir %{_libdir}/heartbeat/plugins
 %dir %{_libdir}/heartbeat/plugins/*
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/*/*.so
 %attr(755,root,root) %{_libdir}/heartbeat/[!cp]*
 %attr(755,root,root) %{_libdir}/heartbeat/c[!t]*
-%attr(755,root,root) %{_libdir}/heartbeat/p[!l]*
 %dir %{_libdir}/pils
 %dir %{_libdir}/pils/plugins
 %dir %{_libdir}/pils/plugins/*
 %dir %{_datadir}/heartbeat
 %attr(755,root,root) %{_datadir}/heartbeat/BasicSanityCheck
 %attr(755,root,root) %{_datadir}/heartbeat/ResourceManager
-%attr(755,root,root) %{_datadir}/heartbeat/SNMPAgentSanityCheck
 %attr(755,root,root) %{_datadir}/heartbeat/TestHeartbeatComm
 %attr(755,root,root) %{_datadir}/heartbeat/ha_*
 %attr(755,root,root) %{_datadir}/heartbeat/hb_*
@@ -325,7 +279,6 @@ fi
 %attr(755,root,root) %{_datadir}/heartbeat/mach_down
 %attr(755,root,root) %{_datadir}/heartbeat/req_resource
 %attr(755,root,root) %{_datadir}/heartbeat/utillib.sh
-%{_datadir}/heartbeat/crm.dtd
 %{_datadir}/heartbeat/ra-api-1.dtd
 %attr(755,root,root) %{_libdir}/pils/plugins/*/*.so
 %dir %{_sysconfdir}/ha.d
@@ -335,19 +288,13 @@ fi
 %{_sysconfdir}/ha.d/README.config
 %attr(755,root,root) %{_sysconfdir}/ha.d/harc
 %{_sysconfdir}/ha.d/shellfuncs
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/hbmgmtd
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/heartbeat
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
 %attr(755,root,root) %{_prefix}/lib/ocf
 %dir /var/run/heartbeat
 %attr(750,hacluster,haclient) %dir /var/run/heartbeat/ccm
-%attr(750,hacluster,haclient) %dir /var/run/heartbeat/crm
 %dir /var/lib/heartbeat
 %attr(770,root,haclient) %dir /var/lib/heartbeat/lrm
-%attr(770,root,haclient) %dir /var/lib/heartbeat/mgmt
-%attr(750,hacluster,haclient) %dir /var/lib/heartbeat/pengine
-%attr(750,hacluster,haclient) %dir /var/lib/heartbeat/crm
-%attr(750,root,haclient) %dir /var/lib/heartbeat/fencing
 %attr(711,root,root) %dir /var/lib/heartbeat/cores
 %attr(700,root,root) %dir /var/lib/heartbeat/cores/root
 # we don't want any files owned by nobody
@@ -363,12 +310,12 @@ fi
 %attr(755,root,root) %{_bindir}/hb_standby
 %attr(755,root,root) %{_bindir}/hb_takeover
 %attr(755,root,root) %{_sbindir}/[a-i]*
-%attr(755,root,root) %{_sbindir}/ptest
 %attr(755,root,root) %{_sbindir}/ocf-tester
+%attr(755,root,root) %{_sbindir}/sbd
+%attr(755,root,root) %{_sbindir}/sfex_init
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/authkeys
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/ha.cf
-%{_datadir}/snmp/mibs/*mib
 
 %files stonith
 %defattr(644,root,root,755)
@@ -380,8 +327,6 @@ fi
 %attr(755,root,root) %{_libdir}/stonith/plugins/xen0-ha-dom0-stonith-helper
 %attr(755,root,root) %{_sbindir}/meatclient
 %attr(755,root,root) %{_sbindir}/stonith
-%dir %{_datadir}/heartbeat/stonithdtest
-%attr(755,root,root) %{_datadir}/heartbeat/stonithdtest/STONITHDBasicSanityCheck
 %{_mandir}/man8/stonith.8*
 %{_mandir}/man8/meatclient.8*
 
@@ -413,17 +358,3 @@ fi
 %{_datadir}/heartbeat/cts/*.py[co]
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*.sh
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*Dummy
-
-%files gui
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/hb_gui
-%dir %{_libdir}/heartbeat-gui
-%attr(755,root,root) %{_libdir}/heartbeat-gui/*.so.*
-%attr(755,root,root) %{_libdir}/heartbeat-gui/_pymgmt.so
-%{_libdir}/heartbeat-gui/*.a
-%{_libdir}/heartbeat-gui/*.la
-%attr(755,root,root) %{_libdir}/heartbeat-gui/*.py
-%dir %{_datadir}/heartbeat-gui
-%{_datadir}/heartbeat-gui/*.png
-%attr(755,root,root) %{_datadir}/heartbeat-gui/*.py
-%{_datadir}/heartbeat-gui/haclient.glade
