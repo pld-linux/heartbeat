@@ -29,6 +29,7 @@ BuildRequires:	glib2-devel
 BuildRequires:	gnutls-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libnet-devel >= 1.1.0
+BuildRequires:	libnl-devel
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 BuildRequires:	libwrap-devel
