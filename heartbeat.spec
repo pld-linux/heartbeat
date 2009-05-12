@@ -48,11 +48,11 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
+Requires:	%{name}-libs = %{version}-%{release}
 Requires:	psmisc >= 22.5-2
 Requires:	rc-scripts
 Requires:	syslogdaemon
 Requires:	which
-Requires:	%{name}-libs = %{version}-%{release}
 Provides:	group(haclient)
 Provides:	user(hacluster)
 # disappeared
@@ -109,17 +109,18 @@ Requires:	rc-scripts
 %description ldirectord
 ldirectord is a stand-alone daemon to monitor services of real for
 virtual services provided by The Linux Virtual Server
-(http://www.linuxvirtualserver.org/).
+<http://www.linuxvirtualserver.org/>.
 
 %description ldirectord -l pl.UTF-8
 ldirectord to samodzielny demon monitorujący rzeczywiste usługi dla
 wirtualnych usług dostarczanych poprzez Linux Virtual Server
-(http://www.linuxvirtualserver.org/).
+<http://www.linuxvirtualserver.org/>.
 
 %package libs
 Summary:	Heartbeat libraries
 Summary(pl.UTF-8):	Biblioteki heartbeat
 Group:		Libraries
+Conflicts:	heartbeat < 2.99.2-0.1
 
 %description libs
 Heartbeat libraries.
