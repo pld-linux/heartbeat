@@ -52,6 +52,7 @@ Requires:	psmisc >= 22.5-2
 Requires:	rc-scripts
 Requires:	syslogdaemon
 Requires:	which
+Requires:	%{name}-libs = %{version}-%{release}
 Provides:	group(haclient)
 Provides:	user(hacluster)
 # disappeared
@@ -115,11 +116,22 @@ ldirectord to samodzielny demon monitorujący rzeczywiste usługi dla
 wirtualnych usług dostarczanych poprzez Linux Virtual Server
 (http://www.linuxvirtualserver.org/).
 
+%package libs
+Summary:	Heartbeat libraries
+Summary(pl.UTF-8):	Biblioteki heartbeat
+Group:		Libraries
+
+%description libs
+Heartbeat libraries.
+
+%description libs -l pl.UTF-8
+Biblioteki heartbeat.
+
 %package devel
 Summary:	Heartbeat developement header files and libraries
 Summary(pl.UTF-8):	Pliki nagłówkowe i biblioteki heartbeat
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
 Heartbeat developement header files and libraries.
@@ -242,24 +254,6 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,logd.cf,haresources,startstop}
-%attr(755,root,root) %{_libdir}/libapphb.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libapphb.so.2
-%attr(755,root,root) %{_libdir}/libccmclient.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libccmclient.so.1
-%attr(755,root,root) %{_libdir}/libclm.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libclm.so.1
-%attr(755,root,root) %{_libdir}/libhbclient.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libhbclient.so.1
-%attr(755,root,root) %{_libdir}/liblrm.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/liblrm.so.2
-%attr(755,root,root) %{_libdir}/libpils.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpils.so.2
-%attr(755,root,root) %{_libdir}/libplumb.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libplumb.so.2
-%attr(755,root,root) %{_libdir}/libplumbgpl.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libplumbgpl.so.2
-%attr(755,root,root) %{_libdir}/libstonith.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libstonith.so.1
 %dir %{_libdir}/heartbeat
 %dir %{_libdir}/heartbeat/plugins
 %dir %{_libdir}/heartbeat/plugins/*
@@ -338,6 +332,11 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/ldirectord
 %attr(755,root,root) %{_sbindir}/*ldirectord*
 %{_mandir}/man8/*ldirectord*.8*
+
+%files libs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/lib*.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/lib*.so.[0-9]
 
 %files devel
 %defattr(644,root,root,755)
