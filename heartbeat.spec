@@ -11,7 +11,7 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	2.1.4
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://hg.linux-ha.org/lha-2.1/archive/STABLE-%{version}.tar.bz2
@@ -20,6 +20,7 @@ Source1:	%{name}.init
 Source2:	ldirectord.init
 Patch0:		%{name}-ac.patch
 Patch1:		%{name}-no_ipmilan_test.patch
+Patch2:		%{name}-install.patch
 URL:		http://www.linux-ha.org/Heartbeat
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
@@ -172,6 +173,7 @@ Graficzny interfejs użytkownika dla heartbeat.
 %setup -qn Heartbeat-STABLE-2-1-STABLE-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 rm -rf libltdl
 
