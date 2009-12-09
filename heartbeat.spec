@@ -25,8 +25,13 @@ URL:		http://www.linux-ha.org/Heartbeat
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	bison
+BuildRequires:	bzip2-devel
+BuildRequires:	flex
 BuildRequires:	gdbm-devel
+BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel
+BuildRequires:	glibc-misc
 BuildRequires:	gnutls-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libnet-devel >= 1.1.0
