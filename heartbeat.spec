@@ -15,7 +15,7 @@
 #
 %include	/usr/lib/rpm/macros.perl
 %define		subver	rc2
-%define		rel		0.1
+%define		rel		0.2
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
@@ -60,6 +60,7 @@ BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	swig-perl >= 1.3.25
 BuildRequires:	swig-python >= 1.3.25
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	cluster-glue
 Requires:	psmisc >= 22.5-2
 Requires:	rc-scripts
 Requires:	resource-agents
