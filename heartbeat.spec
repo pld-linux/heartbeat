@@ -1,4 +1,3 @@
-#
 # TODO:
 #   - think how to handle /etc/ha.d/haresources file, which is v1 config file
 #   and should not exist if v2 configuration is enabled ("crm yes", default is
@@ -11,7 +10,7 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	2.1.4
-Release:	5
+Release:	6
 License:	GPL v2+
 Group:		Applications/System
 Source0:	http://hg.linux-ha.org/lha-2.1/archive/STABLE-%{version}.tar.bz2
@@ -68,6 +67,8 @@ Provides:	user(hacluster)
 # disappeared
 Obsoletes:	perl-heartbeat
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		mibsdir		/usr/share/mibs
 
 %define		specflags		-fgnu89-inline
 %define		filterout_ld	-Wl,--as-needed
@@ -174,6 +175,17 @@ Graphical user interface for heartbeat.
 %description gui -l pl.UTF-8
 Graficzny interfejs użytkownika dla heartbeat.
 
+%package -n mibs-%{name}
+Summary:	Linux-HA MIB
+Group:		Applications/System
+Requires:	mibs-dirs
+Requires:	mibs-net-snmp
+
+%description -n mibs-%{name}
+This MIB can be used to manage a Linux-HA cluster. The initial plan is
+to make the heartbeat, resource managment, and memberships accessible
+through SNMP. Hopefully more things can be added as Linux-HA matures.
+
 %prep
 %setup -qn Heartbeat-STABLE-2-1-STABLE-%{version}
 %patch0 -p1
@@ -196,6 +208,7 @@ rm -rf libltdl
 	MOUNT=/bin/mount \
 	PING=/bin/ping \
 	--with-initdir=/etc/rc.d/init.d \
+	--with-mibsdir=%{mibsdir} \
 	--enable-fatal-warnings=no \
 	--enable-crm \
 	--enable-lrm \
@@ -375,7 +388,10 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/authkeys
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/ha.d/ha.cf
-%{_datadir}/snmp/mibs/*mib
+
+%files -n mibs-%{name}
+%defattr(644,root,root,755)
+%{mibsdir}/LINUX-HA-MIB.mib
 
 %files stonith
 %defattr(644,root,root,755)
