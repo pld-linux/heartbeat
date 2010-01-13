@@ -34,8 +34,11 @@ BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	cluster-glue-libs-devel
+BuildRequires:	docbook-dtd44-xml
+BuildRequires:	docbook-style-xsl
 BuildRequires:	gdbm-devel
 BuildRequires:	glib2-devel
+BuildRequires:	glibc-misc
 BuildRequires:	gnutls-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libnet-devel >= 1.1.0
@@ -44,6 +47,7 @@ BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 BuildRequires:	libwrap-devel
 BuildRequires:	libxml2-devel
+BuildRequires:	libxslt-progs
 BuildRequires:	lm_sensors-devel
 BuildRequires:	ncurses-devel >= 5.4
 BuildRequires:	net-snmp-devel >= 5.1
@@ -57,8 +61,8 @@ BuildRequires:	swig-perl >= 1.3.25
 BuildRequires:	swig-python >= 1.3.25
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	psmisc >= 22.5-2
-Requires:	resource-agents
 Requires:	rc-scripts
+Requires:	resource-agents
 Requires:	syslogdaemon
 Requires:	which
 # disappeared
