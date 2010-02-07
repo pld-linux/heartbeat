@@ -22,7 +22,7 @@ fi
 
 CrmEnabled() {
 	case `ha_parameter crm | tr '[A-Z]' '[a-z]'` in
-		y|yes|enable|on|true|1|manual)      
+		y|yes|enable|on|true|1|manual)
 			true;;
 		*)
 			false;;
@@ -50,7 +50,7 @@ StandbyHA() {
   if
     $HA_BIN/heartbeat -s >/dev/null 2>&1
   then
-    show "Attempting to enter standby mode" ; busy
+    show "Attempting to enter standby mode"; busy
     if
       $HA_BIN/hb_standby
     then
@@ -66,8 +66,8 @@ StandbyHA() {
 
 RunStartStop() {
 # Run pre-startup script if it exists
-if [  -f $HA_DIR/resource.d/startstop ]; then
-	$HA_DIR/resource.d/startstop  "$@"
+if [ -f $HA_DIR/resource.d/startstop ]; then
+	$HA_DIR/resource.d/startstop "$@"
 fi
 }
 
@@ -75,7 +75,7 @@ start() {
 	$HA_BIN/ha_logd -s 2>&1 >/dev/null
 	if [ $? -ne 0 ]; then
 		msg_starting ha_logd
-		daemon $HA_BIN/ha_logd -d
+		daemon --pidfile /var/run/logd.pid $HA_BIN/ha_logd -d
 	else
 		msg_already_running "ha_logd"
 	fi
@@ -83,18 +83,18 @@ start() {
 		msg_already_running "Heartbeat"
 	else
 		RunStartStop pre-start
-		if ! CrmEnabled ; then
+		if ! CrmEnabled; then
 			$HA_NOARCHBIN/ResourceManager verifyallidle
 		fi
-		for d in /var/run/heartbeat/{crm,ccm} ; do
-			if ! [ -d $d ] ; then
+		for d in /var/run/heartbeat/{crm,ccm}; do
+			if ! [ -d $d ]; then
 				mkdir -p $d
 				chown hacluster:haclient $d
 				chmod 750 $d
 			fi
 		done
 		msg_starting "Heartbeat"
-		daemon $HA_BIN/heartbeat 2>&1
+		daemon --pidfile /var/run/heartbeat.pid $HA_BIN/heartbeat 2>&1
 		touch /var/lock/subsys/heartbeat
 		RETVAL=$?
 		RunStartStop post-start $RETVAL
@@ -106,25 +106,31 @@ stop() {
 	$HA_BIN/heartbeat -s 2>&1 >/dev/null
 	if [ $? -eq 0 ]; then
 		msg_stopping "Heartbeat"
-		daemon $HA_BIN/heartbeat -k
-        else
+		busy
+		$HA_BIN/heartbeat -k
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && ok || fail
+	else
 		msg_not_running heartbeat
-        fi
-        RunStartStop post-stop $RETVAL
+	fi
+	RunStartStop post-stop $RETVAL
 	$HA_BIN/ha_logd -s 2>&1 >/dev/null
 	if [ $? -eq 0 ]; then
 		msg_stopping ha_logd
-		killproc ha_logd
+		busy
+		$HA_BIN/ha_logd -k
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && ok || fail
 	else
 		msg_not_running ha_logd
 	fi
-	rm -f /var/lock/subsys/heartbeat 2>/dev/null
+	rm -f /var/lock/subsys/heartbeat /var/run/heartbeat.pid /var/run/logd.pid 2>/dev/null
 }
 
 RETVAL=0
 case "$1" in
   start)
-  	start
+	start
 	;;
   standby)
 	StandbyHA
@@ -135,7 +141,7 @@ case "$1" in
 	RETVAL=$?
 	;;
   stop)
-  	stop
+	stop
 	;;
   restart)
 	stop
@@ -143,8 +149,10 @@ case "$1" in
 	;;
   force-reload|reload)
 	msg_reloading "Heartbeat"
-	daemon $HA_BIN/heartbeat -r
+	busy
+	$HA_BIN/heartbeat -r
 	RETVAL=$?
+	[ $RETVAL -eq 0 ] && ok || fail
 	;;
   *)
 	msg_usage "$0 {start|stop|status|standby|restart|reload|force-reload}"
