@@ -12,6 +12,9 @@
 # - merge mibs supackage from 2.1 branch
 # - cleanup deps, users for 3.x
 # - fixup deps, inner deps, think of subpackages, ugprade path from 2.1
+# - move /etc/ha.d/resource.d and similar directories to '-dirs' sub-package
+#   so things like drbd, which provide resource scripts' do not require whole
+#   heartbeat
 #
 %include	/usr/lib/rpm/macros.perl
 %define		subver	rc2
