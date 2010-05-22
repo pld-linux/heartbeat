@@ -25,7 +25,7 @@ Name:		heartbeat
 Version:	3.0.2
 Release:	0.%{subver}.%{rel}
 License:	GPL v2+
-Group:		Applications/System
+Group:		Networking/Daemons
 Source0:	http://www.linux-ha.org/w/images/3/32/Heartbeat-%{version}-%{subver}.tar.bz2
 # Source0-md5:	3c45d668ebb9f964caa1b40fd0808745
 Source1:	%{name}.init
