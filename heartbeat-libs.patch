@@ -1,0 +1,47 @@
+diff -ru heartbeat-3.0.2-rc2.orig/lib/apphb/Makefile.am heartbeat-3.0.2-rc2/lib/apphb/Makefile.am
+--- heartbeat-3.0.2-rc2.orig/lib/apphb/Makefile.am	2009-12-19 19:46:52.000000000 +0100
++++ heartbeat-3.0.2-rc2/lib/apphb/Makefile.am	2011-04-27 16:03:17.553343763 +0200
+@@ -38,4 +38,4 @@
+ libapphb_la_CFLAGS	= -lpthread
+ endif
+ 
+-libapphb_la_LDFLAGS	= -version-info 2:0:0 
++libapphb_la_LDFLAGS	= -version-info 2:0:0 -lglib-2.0 -lplumb
+diff -ru heartbeat-3.0.2-rc2.orig/lib/hbclient/Makefile.am heartbeat-3.0.2-rc2/lib/hbclient/Makefile.am
+--- heartbeat-3.0.2-rc2.orig/lib/hbclient/Makefile.am	2011-04-27 15:59:06.973343764 +0200
++++ heartbeat-3.0.2-rc2/lib/hbclient/Makefile.am	2011-04-27 16:03:17.553343763 +0200
+@@ -44,8 +44,8 @@
+ lib_LTLIBRARIES		= libhbclient.la 
+ 
+ libhbclient_la_SOURCES	= client_lib.c
+-libhbclient_la_LDFLAGS	= -version-info 1:0:0
+-libhbclient_la_LIBADD	= $(top_builddir)/replace/libreplace.la  
++libhbclient_la_LDFLAGS	= -version-info 1:0:0 -lplumb
++libhbclient_la_LIBADD	= $(top_builddir)/replace/libreplace.la $(gliblib)
+ 
+ ## binary progs
+ halib_PROGRAMS		= api_test
+diff -ru heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am heartbeat-3.0.2-rc2/membership/ccm/Makefile.am
+--- heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am	2009-12-19 19:46:52.000000000 +0100
++++ heartbeat-3.0.2-rc2/membership/ccm/Makefile.am	2011-04-27 16:07:02.910011000 +0200
+@@ -82,7 +82,7 @@
+ 
+ 
+ libccmclient_la_SOURCES	= ccmlib_memapi.c ccmlib_eventapi.c ccmlib.h
+-libccmclient_la_LDFLAGS	= -version-info 1:0:0
++libccmclient_la_LDFLAGS	= -version-info 1:0:0 $(gliblib) -lplumb
+ 
+ 
+ ## library libclm.la
+@@ -95,7 +95,10 @@
+ 
+ ## Add -DPOSIX_THREADS to CFLAGS to compile a thread-safe version library
+ libclm_la_CFLAGS	= -g #-DPOSIX_THREADS
+-libclm_la_LDFLAGS	= -version-info 1:0:0
++libclm_la_LDFLAGS	= -version-info 1:0:0 \
++			  -lplumb \
++			  $(gliblib)
++libclm_la_LIBADD		= libccmclient.la
+ 
+ clmtest_SOURCES		= clmtest.c
+ clmtest_LDADD		= libclm.la libccmclient.la \

@@ -30,6 +30,8 @@ Source0:	http://www.linux-ha.org/w/images/3/32/Heartbeat-%{version}-%{subver}.ta
 # Source0-md5:	3c45d668ebb9f964caa1b40fd0808745
 Source1:	%{name}.init
 Patch0:		%{name}-ac.patch
+Patch1:		%{name}-drbd-outdate-libs.patch
+Patch2:		%{name}-libs.patch
 URL:		http://www.linux-ha.org/Heartbeat
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
@@ -148,6 +150,8 @@ Zestaw testów klastra opartego o heartbeat.
 %prep
 %setup -qn %{name}-%{version}-%{subver}
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
 rm -rf libltdl
 
 %build
