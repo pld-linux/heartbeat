@@ -15,7 +15,7 @@
 # - keep /etc/ha.d/resource.d in resource-agents, not here
 #
 %include	/usr/lib/rpm/macros.perl
-%define		rel		0.1
+%define		rel		0.2
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
@@ -147,9 +147,9 @@ Cluster Test Suite for heartbeat.
 Zestaw testów klastra opartego o heartbeat.
 
 %prep
-%setup -qn %{name}-%{version}
+%setup -qn Heartbeat-3-0-STABLE-%{version}
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
 %patch2 -p1
 rm -rf libltdl
 
