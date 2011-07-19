@@ -15,19 +15,18 @@
 # - keep /etc/ha.d/resource.d in resource-agents, not here
 #
 %include	/usr/lib/rpm/macros.perl
-%define		subver	rc2
-%define		rel		0.2
+%define		rel		0.1
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	3.0.2
-Release:	0.%{subver}.%{rel}
+Version:	3.0.5
+Release:	0.%{rel}
 License:	GPL v2+
 Group:		Networking/Daemons
-Source0:	http://www.linux-ha.org/w/images/3/32/Heartbeat-%{version}-%{subver}.tar.bz2
-# Source0-md5:	3c45d668ebb9f964caa1b40fd0808745
+Source0:	http://hg.linux-ha.org/heartbeat-STABLE_3_0/archive/STABLE-%{version}.tar.bz2
+# Source0-md5:	f8686abde8722c42265c6d84fbe3d3bf
 Source1:	%{name}.init
 Patch0:		%{name}-ac.patch
 Patch1:		%{name}-drbd-outdate-libs.patch
@@ -148,7 +147,7 @@ Cluster Test Suite for heartbeat.
 Zestaw testów klastra opartego o heartbeat.
 
 %prep
-%setup -qn %{name}-%{version}-%{subver}
+%setup -qn %{name}-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
