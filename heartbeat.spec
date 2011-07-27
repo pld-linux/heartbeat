@@ -2,7 +2,6 @@
 # - merge mibs supackage from 2.1 branch
 # - cleanup deps, users for 3.x
 # - fixup deps, inner deps, think of subpackages, ugprade path from 2.1
-# - keep /etc/ha.d/resource.d in resource-agents, not here
 #
 %include	/usr/lib/rpm/macros.perl
 Summary:	Heartbeat - subsystem for High-Availability Linux
@@ -11,7 +10,7 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	3.0.5
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Networking/Daemons
 Source0:	http://hg.linux-ha.org/heartbeat-STABLE_3_0/archive/STABLE-%{version}.tar.bz2
@@ -216,6 +215,7 @@ fi
 %attr(755,root,root) %{_datadir}/heartbeat/hb_*
 %attr(755,root,root) %{_datadir}/heartbeat/mach_down
 %attr(755,root,root) %{_datadir}/heartbeat/req_resource
+%dir %{_sysconfdir}/ha.d
 %attr(755,root,root) %{_sysconfdir}/ha.d/rc.d
 %attr(755,root,root) %{_sysconfdir}/ha.d/resource.d
 %{_sysconfdir}/ha.d/README.config
