@@ -11,12 +11,13 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	3.0.5
-Release:	3
+Release:	4
 License:	GPL v2+
 Group:		Networking/Daemons
 Source0:	http://hg.linux-ha.org/heartbeat-STABLE_3_0/archive/%{gitrel}.tar.bz2
 # Source0-md5:	396510e3c143a9c2288bc52cfc9caa3c
 Source1:	%{name}.init
+Source2:	%{name}.tmpfiles
 Patch0:		%{name}-ac.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-tls.patch
@@ -163,7 +164,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} -j1 install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT/var/run/heartbeat
+install -d $RPM_BUILD_ROOT{/var/run/heartbeat,/usr/lib/tmpfiles.d}
 
 # plugins are lt_dlopened, but using *.so names, so *.la are not used
 rm -f $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/*/*.{la,a}
@@ -184,6 +185,8 @@ done
 rm $RPM_BUILD_ROOT%{_datadir}/heartbeat/cts/README
 
 sed -i -e's, /%{_lib}/libpam.la, /usr/%{_lib}/libpam.la,g' $RPM_BUILD_ROOT%{_libdir}/*.la
+
+install %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -241,6 +244,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/haresources
 %attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/authkeys
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/ha.cf
+/usr/lib/tmpfiles.d/%{name}.conf
 
 %files libs
 %defattr(644,root,root,755)
