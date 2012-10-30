@@ -225,6 +225,7 @@ fi
 %attr(755,root,root) %{_sysconfdir}/ha.d/rc.d
 %{_sysconfdir}/ha.d/README.config
 %attr(755,root,root) %{_sysconfdir}/ha.d/harc
+%attr(755,root,root) %{_sysconfdir}/ha.d/resource.d/*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/heartbeat
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
 %dir /var/run/heartbeat
