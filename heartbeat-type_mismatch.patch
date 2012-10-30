@@ -1,0 +1,26 @@
+http://hg.linux-ha.org/heartbeat-STABLE_3_0/rev/7e3a82377fa8
+
+# HG changeset patch
+# User Lars Ellenberg <lars@linbit.com>
+# Date 1308306763 -7200
+# Node ID 7e3a82377fa8c88b4d9ee47e29020d4531f4629a
+# Parent  66b99da853910131ed599e8b06d200883f51b895
+Fix type mismatch in reset_seqtrack
+
+Would result in compilation warning, and probably bad runtime behaviour on
+32bit arch, if facing packet loss when packet sequence numbers already left
+the 32bit value space.
+
+--- a/heartbeat/heartbeat.c
++++ b/heartbeat/heartbeat.c
+@@ -5517,7 +5517,8 @@ static void
+ reset_seqtrack(struct node_info *n)
+ {
+ 	struct seqtrack *t = &n->track;
+-	int i, seq;
++	seqno_t seq;
++	int i;
+ 
+ 	for (i = 0; i < t->nmissing; ++i) {
+ 		seq = t->seqmissing[i];
+

@@ -3,7 +3,6 @@
 # - cleanup deps, users for 3.x
 # - fixup deps, inner deps, think of subpackages, ugprade path from 2.1
 #
-%define		gitrel	7e3a82377fa8
 %include	/usr/lib/rpm/macros.perl
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
@@ -11,16 +10,17 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	3.0.5
-Release:	5
+Release:	6
 License:	GPL v2+
 Group:		Networking/Daemons
-Source0:	http://hg.linux-ha.org/heartbeat-STABLE_3_0/archive/%{gitrel}.tar.bz2
-# Source0-md5:	396510e3c143a9c2288bc52cfc9caa3c
+Source0:	http://hg.linux-ha.org/heartbeat-STABLE_3_0/archive/STABLE-%{version}.tar.bz2
+# Source0-md5:	f8686abde8722c42265c6d84fbe3d3bf
 Source1:	%{name}.init
 Source2:	%{name}.tmpfiles
-Patch0:		%{name}-ac.patch
-Patch1:		%{name}-libs.patch
-Patch2:		%{name}-tls.patch
+Patch0:		%{name}-type_mismatch.patch
+Patch1:		%{name}-ac.patch
+Patch2:		%{name}-libs.patch
+Patch3:		%{name}-tls.patch
 URL:		http://www.linux-ha.org/Heartbeat
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
@@ -137,10 +137,11 @@ Cluster Test Suite for heartbeat.
 Zestaw testów klastra opartego o heartbeat.
 
 %prep
-%setup -qn Heartbeat-3-0-%{gitrel}
+%setup -qn Heartbeat-3-0-STABLE-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 rm -rf libltdl
 
 %build
