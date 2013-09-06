@@ -1,0 +1,34 @@
+--- Heartbeat-3-0-STABLE-3.0.5/lib/plugins/HBcomm/ucast.c.orig	2011-06-16 12:46:23.000000000 +0200
++++ Heartbeat-3-0-STABLE-3.0.5/lib/plugins/HBcomm/ucast.c	2013-09-06 18:42:54.906180245 +0200
+@@ -462,7 +462,7 @@
+ 	struct ip_private *ei;
+ 	int tos;
+ #if defined(SO_BINDTODEVICE)
+-	struct ifreq i;
++	struct ifreq ifrq;
+ #endif
+ #if defined(SO_REUSEPORT)
+ 	int i = 1;
+@@ -499,18 +499,18 @@
+ 		 *
+ 		 * This is so we can have redundant NICs, and heartbeat on both
+ 		 */
+-		strcpy(i.ifr_name,  ei->interface);
++		strcpy(ifrq.ifr_name,  ei->interface);
+ 
+ 		if (setsockopt(sockfd, SOL_SOCKET, SO_BINDTODEVICE,
+-				&i, sizeof(i)) == -1) {
++				&ifrq, sizeof(ifrq)) == -1) {
+ 			PILCallLog(LOG, PIL_CRIT,
+ 			  "ucast: error setting option SO_BINDTODEVICE(w) on %s: %s",
+-			  i.ifr_name, strerror(errno));
++			  ifrq.ifr_name, strerror(errno));
+ 			close(sockfd);
+ 			return -1;
+ 		}
+ 		PILCallLog(LOG, PIL_INFO, "ucast: bound send socket to device: %s",
+-			i.ifr_name);
++			ifrq.ifr_name);
+ 	}
+ #endif
+ #if defined(SO_REUSEPORT)

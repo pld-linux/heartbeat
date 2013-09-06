@@ -21,6 +21,7 @@ Patch0:		%{name}-type_mismatch.patch
 Patch1:		%{name}-ac.patch
 Patch2:		%{name}-libs.patch
 Patch3:		%{name}-tls.patch
+Patch4:		%{name}-ucast.patch
 URL:		http://www.linux-ha.org/Heartbeat
 BuildRequires:	OpenIPMI-devel >= 2.0.3
 BuildRequires:	autoconf
@@ -142,7 +143,7 @@ Zestaw testów klastra opartego o heartbeat.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-rm -rf libltdl
+%patch4 -p1
 
 %build
 %{__libtoolize} --ltdl
