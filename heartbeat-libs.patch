@@ -45,3 +45,86 @@ diff -ru heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am heartbeat-3.0.2-rc2
  
  clmtest_SOURCES		= clmtest.c
  clmtest_LDADD		= libclm.la libccmclient.la \
+--- Heartbeat-3-0-STABLE-3.0.5/configure.in.orig	2013-09-06 19:02:36.552797324 +0200
++++ Heartbeat-3-0-STABLE-3.0.5/configure.in	2013-09-06 21:47:09.149049676 +0200
+@@ -614,6 +614,7 @@
+ fi
+ AC_SUBST(DLOPEN_FORCE_FLAGS)
+ 
++LIBUUID=
+ dnl ************ uuid **********************
+ AC_ARG_WITH(uuid,
+     [  --with-uuid=UUID      mechanism for uuid {e2fsprogs|ossp|any|no}
+@@ -626,25 +627,26 @@
+   )
+ case $uuidimpl in
+ e2fsprogs)
+-  AC_CHECK_LIB(uuid, uuid_parse,,
++  AC_CHECK_LIB(uuid, uuid_parse,[LIBUUID=-luuid],
+     AC_MSG_ERROR([e2fsprogs uuid library was explicitly requested but not found])
+   )
+   ;;
+ ossp)
+-  AC_CHECK_LIB(uuid, uuid_create,,
++  AC_CHECK_LIB(uuid, uuid_create,[LIBUUID=-luuid],
+     AC_MSG_ERROR([ossp uuid library was explicitly requested but not found])
+   )
+   ;;
+ no)	# Do not define anything; so use inbuilt (replace) implementation.
+   ;;
+ any)	# Default: try to discover an implementation that we can use.
+-  AC_CHECK_LIB(uuid, uuid_parse)	dnl e2fsprogs
++  AC_CHECK_LIB(uuid, uuid_parse,[LIBUUID=-luuid])	dnl e2fsprogs
+ dnl  AC_CHECK_LIB(uuid, uuid_create)	dnl ossp
+   ;;
+ *)
+   AC_MSG_ERROR([An invalid uuid library was explicitly requested])
+   ;;
+ esac
++AC_SUBST([LIBUUID])
+ 
+ case "$host_os" in
+ darwin*)	
+@@ -1854,7 +1854,7 @@
+ dnl	getopt: If this is valid, define HAVE_DECL_GETOPT to make the getopt.h header compile cleanly.
+ dnl
+ 
+-AC_REPLACE_FUNCS(alphasort inet_pton NoSuchFunctionName scandir setenv strerror unsetenv strnlen strndup daemon uuid_parse strlcpy strlcat)
++AC_REPLACE_FUNCS(alphasort inet_pton NoSuchFunctionName scandir setenv strerror unsetenv strnlen strndup daemon strlcpy strlcat)
+ dnl AC_CHECK_FUNCS(alphasort inet_pton NoSuchFunctionName scandir setenv strerror unsetenv strnlen strndup daemon uuid_parse)
+ 
+ AC_CHECK_FUNCS(getopt, 
+@@ -1951,7 +1953,7 @@
+ dnl check if header file and lib are there for zlib
+ zlib_installed="yes"
+ AC_CHECK_HEADERS(zlib.h, , [zlib_installed="no"],)
+-AC_CHECK_LIB(z, compress , , [zlib_installed="no"])
++AC_CHECK_LIB(z, compress , [LIBZ=-lz] , [zlib_installed="no"])
+ AM_CONDITIONAL(BUILD_ZLIB_COMPRESS_MODULE, test "x${zlib_installed}" = "xyes")
+ if test "x${zlib_installed}" = "xno"; then
+ 	FatalMissingThing "zlib" \
+@@ -1962,13 +1964,13 @@
+ dnl check if header file and lib are there for zlib
+ bz2_installed="yes"
+ AC_CHECK_HEADERS(bzlib.h, , [bz2_installed="no"],)
+-AC_CHECK_LIB(bz2, BZ2_bzBuffToBuffCompress , , [bz2_installed="no"])
++AC_CHECK_LIB(bz2, BZ2_bzBuffToBuffCompress , [LIBBZ2=-lbz2], [bz2_installed="no"])
+ AM_CONDITIONAL(BUILD_BZ2_COMPRESS_MODULE, test "x${bz2_installed}" = "xyes")
+ 
+ dnl check if header file and lib are there for openais module
+ openais_installed="yes"
+ AC_CHECK_HEADERS(evs.h, , [openais_installed="no"],)
+-AC_CHECK_LIB(evs, evs_initialize , , [openais_installed="no"])
++AC_CHECK_LIB(evs, evs_initialize , [LIBEVS=-levs] , [openais_installed="no"])
+ AM_CONDITIONAL(BUILD_OPENAIS_MODULE, test "x${openais_installed}" = "xyes")
+ 
+ dnl check if there are getpid() inconsistency
+@@ -2086,7 +2086,7 @@
+ 	GNUTLSLIBS="`$LIBGNUTLS_CONFIG --libs`";
+ 	AC_MSG_RESULT($GNUTLSLIBS)
+ else
+-	AC_CHECK_LIB(gnutls, gnutls_init)
++	AC_CHECK_LIB(gnutls, gnutls_init, [GNUTLSLIBS=-lgnutls])
+ fi
+ AC_SUBST(GNUTLSHEAD)
+ AC_SUBST(GNUTLSLIBS)

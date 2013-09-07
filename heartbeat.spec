@@ -3,7 +3,9 @@
 # - cleanup deps, users for 3.x
 # - fixup deps, inner deps, think of subpackages, ugprade path from 2.1
 #
-%include	/usr/lib/rpm/macros.perl
+# Conditional build:
+%bcond_with	openais	# OpenAIS (pre-corosync) support
+#
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
@@ -23,35 +25,25 @@ Patch2:		%{name}-libs.patch
 Patch3:		%{name}-tls.patch
 Patch4:		%{name}-ucast.patch
 URL:		http://www.linux-ha.org/Heartbeat
-BuildRequires:	OpenIPMI-devel >= 2.0.3
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
 BuildRequires:	cluster-glue-libs-devel
 BuildRequires:	docbook-dtd44-xml
 BuildRequires:	docbook-style-xsl
-BuildRequires:	gdbm-devel
-BuildRequires:	glib2-devel
+BuildRequires:	glib2-devel >= 2.0
 BuildRequires:	glibc-misc
 BuildRequires:	gnutls-devel
 BuildRequires:	libltdl-devel
-BuildRequires:	libnet-devel >= 1.1.0
-BuildRequires:	libnl-devel
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
-BuildRequires:	libwrap-devel
-BuildRequires:	libxml2-devel
 BuildRequires:	libxslt-progs
-BuildRequires:	lm_sensors-devel
 BuildRequires:	ncurses-devel >= 5.4
-BuildRequires:	net-snmp-devel >= 5.1
-BuildRequires:	pam-devel
+%{?with_openais:BuildRequires:	openais-devel}
 BuildRequires:	pkgconfig
+BuildRequires:	python
 BuildRequires:	python-devel
-BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
-BuildRequires:	swig-perl >= 1.3.25
-BuildRequires:	swig-python >= 1.3.25
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	cluster-glue
 Requires:	psmisc >= 22.5-2
@@ -63,8 +55,7 @@ Requires:	which
 Obsoletes:	perl-heartbeat
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		specflags		-fgnu89-inline
-%define		filterout_ld	-Wl,--as-needed
+%define		specflags	-fgnu89-inline
 
 %description
 heartbeat is a basic heartbeat subsystem for Linux-HA. It will run
@@ -102,16 +93,19 @@ Heartbeat libraries.
 Biblioteki heartbeat.
 
 %package devel
-Summary:	Heartbeat developement header files and libraries
-Summary(pl.UTF-8):	Pliki nagłówkowe i biblioteki heartbeat
+Summary:	Heartbeat development header files
+Summary(pl.UTF-8):	Pliki nagłówkowe bibliotek heartbeat
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	cluster-glue-libs-devel
+Requires:	glib2-devel >= 2.0
+Requires:	libltdl-devel
 
 %description devel
-Heartbeat developement header files and libraries.
+Heartbeat development header files.
 
 %description devel -l pl.UTF-8
-Pliki nagłówkowe i biblioteki heartbeat.
+Pliki nagłówkowe bibliotek heartbeat.
 
 %package static
 Summary:	Heartbeat static libraries
@@ -152,6 +146,7 @@ Zestaw testów klastra opartego o heartbeat.
 %{__autoheader}
 %{__automake}
 %configure \
+	%{!?with_openais:ac_cv_header_evs_h=no} \
 	--with-initdir=/etc/rc.d/init.d \
 	--docdir=%{_docdir}/%{name}-%{version} \
 	--enable-fatal-warnings=no \
@@ -169,9 +164,9 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/var/run/heartbeat,/usr/lib/tmpfiles.d}
 
 # plugins are lt_dlopened, but using *.so names, so *.la are not used
-rm -f $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/*/*.{la,a}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/*/*.{la,a}
 
-rm -f $RPM_BUILD_ROOT/etc/rc.d/init.d/heartbeat
+%{__rm} $RPM_BUILD_ROOT/etc/rc.d/init.d/heartbeat
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/heartbeat
 
 > $RPM_BUILD_ROOT/etc/ha.d/haresources
@@ -184,9 +179,7 @@ for tool in hb_addnode hb_delnode hb_standby hb_takeover; do
 	ln -s $tool $RPM_BUILD_ROOT%{_bindir}
 done
 
-rm $RPM_BUILD_ROOT%{_datadir}/heartbeat/cts/README
-
-sed -i -e's, /%{_lib}/libpam.la, /usr/%{_lib}/libpam.la,g' $RPM_BUILD_ROOT%{_libdir}/*.la
+%{__rm} $RPM_BUILD_ROOT%{_datadir}/heartbeat/cts/README
 
 install %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 
@@ -209,12 +202,39 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc doc/{*.html,AUTHORS,apphbd.cf,authkeys,ha.cf,haresources,startstop}
+%attr(755,root,root) %{_bindir}/cl_respawn
+%attr(2755,root,haclient) %{_bindir}/cl_status
+%attr(755,root,root) %{_bindir}/hb_addnode
+%attr(755,root,root) %{_bindir}/hb_delnode
+%attr(755,root,root) %{_bindir}/hb_standby
+%attr(755,root,root) %{_bindir}/hb_takeover
 %dir %{_libdir}/heartbeat
 %dir %{_libdir}/heartbeat/plugins
-%dir %{_libdir}/heartbeat/plugins/*
-%attr(755,root,root) %{_libdir}/heartbeat/plugins/*/*.so
-%attr(755,root,root) %{_libdir}/heartbeat/[!cp]*
-%attr(755,root,root) %{_libdir}/heartbeat/c[!t]*
+%dir %{_libdir}/heartbeat/plugins/HBauth
+%attr(755,root,root) %{_libdir}/heartbeat/plugins/HBauth/*.so
+%dir %{_libdir}/heartbeat/plugins/HBcomm
+%attr(755,root,root) %{_libdir}/heartbeat/plugins/HBcomm/*.so
+%dir %{_libdir}/heartbeat/plugins/HBcompress
+%attr(755,root,root) %{_libdir}/heartbeat/plugins/HBcompress/*.so
+%dir %{_libdir}/heartbeat/plugins/quorum
+%attr(755,root,root) %{_libdir}/heartbeat/plugins/quorum/*.so
+%dir %{_libdir}/heartbeat/plugins/quorumd
+%attr(755,root,root) %{_libdir}/heartbeat/plugins/quorumd/*.so
+%dir %{_libdir}/heartbeat/plugins/tiebreaker
+%attr(755,root,root) %{_libdir}/heartbeat/plugins/tiebreaker/*.so
+%attr(755,root,root) %{_libdir}/heartbeat/api_test
+%attr(755,root,root) %{_libdir}/heartbeat/apphbd
+%attr(755,root,root) %{_libdir}/heartbeat/apphbtest
+%attr(755,root,root) %{_libdir}/heartbeat/ccm
+%attr(755,root,root) %{_libdir}/heartbeat/ccm_testclient
+%attr(755,root,root) %{_libdir}/heartbeat/clmtest
+%attr(755,root,root) %{_libdir}/heartbeat/dopd
+%attr(755,root,root) %{_libdir}/heartbeat/drbd-peer-outdater
+%attr(755,root,root) %{_libdir}/heartbeat/heartbeat
+%attr(755,root,root) %{_libdir}/heartbeat/ipfail
+%attr(755,root,root) %{_libdir}/heartbeat/mlock
+%attr(755,root,root) %{_libdir}/heartbeat/quorumd
+%attr(755,root,root) %{_libdir}/heartbeat/quorumdtest
 %dir %{_datadir}/heartbeat
 %attr(755,root,root) %{_datadir}/heartbeat/BasicSanityCheck
 %attr(755,root,root) %{_datadir}/heartbeat/ResourceManager
@@ -223,29 +243,29 @@ fi
 %attr(755,root,root) %{_datadir}/heartbeat/hb_*
 %attr(755,root,root) %{_datadir}/heartbeat/mach_down
 %attr(755,root,root) %{_datadir}/heartbeat/req_resource
-%attr(755,root,root) %{_sysconfdir}/ha.d/rc.d
 %{_sysconfdir}/ha.d/README.config
+%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/authkeys
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/ha.cf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/haresources
 %attr(755,root,root) %{_sysconfdir}/ha.d/harc
+%dir %{_sysconfdir}/ha.d/rc.d
+%attr(755,root,root) %{_sysconfdir}/ha.d/rc.d/*
 %attr(755,root,root) %{_sysconfdir}/ha.d/resource.d/*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/heartbeat
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
 %dir /var/run/heartbeat
 %attr(750,hacluster,haclient) %dir /var/run/heartbeat/ccm
 %dir /var/lib/heartbeat
-%{_mandir}/man1/*.1*
-%{_mandir}/man8/[a-h]*.8*
+/usr/lib/tmpfiles.d/%{name}.conf
+%{_mandir}/man1/cl_status.1*
+%{_mandir}/man1/hb_addnode.1*
+%{_mandir}/man1/hb_delnode.1*
+%{_mandir}/man1/hb_standby.1*
+%{_mandir}/man1/hb_takeover.1*
 %{_mandir}/man5/authkeys.5*
 %{_mandir}/man5/ha.cf.5*
-%attr(755,root,root) %{_bindir}/cl_respawn
-%attr(2755,root,haclient) %{_bindir}/cl_status
-%attr(755,root,root) %{_bindir}/hb_addnode
-%attr(755,root,root) %{_bindir}/hb_delnode
-%attr(755,root,root) %{_bindir}/hb_standby
-%attr(755,root,root) %{_bindir}/hb_takeover
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/haresources
-%attr(600,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/authkeys
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ha.d/ha.cf
-/usr/lib/tmpfiles.d/%{name}.conf
+%{_mandir}/man8/apphbd.8*
+%{_mandir}/man8/heartbeat.8*
 
 %files libs
 %defattr(644,root,root,755)
@@ -260,9 +280,6 @@ fi
 
 %files devel
 %defattr(644,root,root,755)
-%{_includedir}/heartbeat
-%{_includedir}/ocf
-%{_includedir}/saf
 %attr(755,root,root) %{_libdir}/libapphb.so
 %attr(755,root,root) %{_libdir}/libccmclient.so
 %attr(755,root,root) %{_libdir}/libclm.so
@@ -271,6 +288,12 @@ fi
 %{_libdir}/libccmclient.la
 %{_libdir}/libclm.la
 %{_libdir}/libhbclient.la
+%{_includedir}/heartbeat/HB*.h
+%{_includedir}/heartbeat/apphb*.h
+%{_includedir}/heartbeat/hb_*.h
+%{_includedir}/heartbeat/heartbeat.h
+%{_includedir}/ocf
+%{_includedir}/saf
 
 %files static
 %defattr(644,root,root,755)
