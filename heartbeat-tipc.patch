@@ -1,0 +1,26 @@
+--- Heartbeat-3-0-STABLE-3.0.6/configure.ac.orig	2015-12-19 22:17:30.801442381 +0100
++++ Heartbeat-3-0-STABLE-3.0.6/configure.ac	2015-12-20 08:24:22.066581009 +0100
+@@ -1086,7 +1086,9 @@
+         TIPC_INCLUDE="-I${TIPC_HEADER_DIR}"
+ else
+         dnl checking tipc.h in standard include directory
++	AC_CHECK_HEADERS(linux/tipc.h, [], [
+         AC_CHECK_HEADERS(net/tipc/tipc.h, [], [tipc_headers_found=no])
++	])
+ fi
+ 
+ AC_SUBST(TIPC_INCLUDE)
+--- Heartbeat-3-0-STABLE-3.0.6/lib/plugins/HBcomm/tipc.c.orig	2015-02-04 15:57:04.000000000 +0100
++++ Heartbeat-3-0-STABLE-3.0.6/lib/plugins/HBcomm/tipc.c	2015-12-20 08:26:15.429909588 +0100
+@@ -44,7 +44,11 @@
+ #include <heartbeat.h>
+ #include <HBcomm.h>
+ 
++#ifdef HAVE_LINUX_TIPC_H
++#include <linux/tipc.h>
++#else
+ #include <net/tipc/tipc.h>
++#endif
+ 
+ 
+ #define PIL_PLUGINTYPE          HB_COMM_TYPE

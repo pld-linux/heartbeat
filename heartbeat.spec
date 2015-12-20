@@ -1,5 +1,4 @@
 # TODO
-# - tipc?
 # - merge mibs subpackage from 2.1 branch
 # - cleanup deps, users for 3.x
 # - fixup deps, inner deps, think of subpackages, ugprade path from 2.1
@@ -19,6 +18,7 @@ Source1:	%{name}.init
 Patch0:		%{name}-ac.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-tls.patch
+Patch3:		%{name}-tipc.patch
 URL:		http://www.linux-ha.org/Heartbeat
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
@@ -133,6 +133,7 @@ Zestaw testów klastra opartego o heartbeat.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__libtoolize} --ltdl
