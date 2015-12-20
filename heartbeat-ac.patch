@@ -1,5 +1,5 @@
---- heartbeat-1.2.0/configure.in.orig	Tue Feb 17 06:50:30 2004
-+++ heartbeat-1.2.0/configure.in	Tue Mar 16 13:36:09 2004
+--- heartbeat-3.0.6/configure.ac.orig	Tue Feb 17 06:50:30 2004
++++ heartbeat-3.0.6/configure.ac	Tue Mar 16 13:36:09 2004
 @@ -258,18 +258,7 @@
  dnl Determine if we use -w1 or -t1 for ping (in PYTHON Scripts)
  
@@ -39,8 +39,8 @@
  
  AC_SUBST(IFCONFIG_A_OPT)
  AC_SUBST(WHOAMI)
---- heartbeat-2.0.7/configure.in.orig	2006-08-08 14:41:54.000000000 +0200
-+++ heartbeat-2.0.7/configure.in	2007-01-27 19:23:30.919741000 +0100
+--- heartbeat-3.0.6/configure.ac.orig	2006-08-08 14:41:54.000000000 +0200
++++ heartbeat-3.0.6/configure.ac	2007-01-27 19:23:30.919741000 +0100
 @@ -1693,8 +1693,12 @@ dnl ************ printw ****************
  	      [
  #if defined(HAVE_CURSES_H)

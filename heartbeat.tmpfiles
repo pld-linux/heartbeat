@@ -1,2 +1,0 @@
-d /var/run/heartbeat  0755 root root -
-d /var/run/heartbeat/ccm 0750 hacluster haclient -

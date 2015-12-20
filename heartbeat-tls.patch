@@ -48,3 +48,33 @@
  
  	if (ret < 0)
  	{
+--- Heartbeat-3-0-STABLE-3.0.6/lib/plugins/quorum/quorumd.c.orig	2015-12-19 16:58:59.832244393 +0100
++++ Heartbeat-3-0-STABLE-3.0.6/lib/plugins/quorum/quorumd.c	2015-12-19 18:28:21.428686050 +0100
+@@ -327,11 +327,10 @@
+ {
+ 	int ret;
+ 	gnutls_session session;
+-	const int cert_type_priority[2] = { GNUTLS_CRT_X509,0};
+ 	
+ 	gnutls_init (&session, GNUTLS_CLIENT);
+ 	gnutls_set_default_priority (session);
+-	gnutls_certificate_type_set_priority (session, cert_type_priority);
++	gnutls_priority_set_direct(session, "NORMAL", NULL);
+ 	gnutls_credentials_set (session, GNUTLS_CRD_CERTIFICATE, xcred);
+ 	gnutls_transport_set_ptr (session, (gnutls_transport_ptr) GINT_TO_POINTER(sd));
+ 	ret = gnutls_handshake (session);
+--- Heartbeat-3-0-STABLE-3.0.6/membership/quorumd/quorumdtest.c.orig	2015-12-19 16:58:59.832244393 +0100
++++ Heartbeat-3-0-STABLE-3.0.6/membership/quorumd/quorumdtest.c	2015-12-19 18:22:04.308701882 +0100
+@@ -136,11 +136,10 @@
+ {
+ 	int ret;
+ 	gnutls_session session;
+-	const int cert_type_priority[2] = { GNUTLS_CRT_X509,0};
+ 	
+ 	gnutls_init (&session, GNUTLS_CLIENT);
+ 	gnutls_set_default_priority (session);
+-	gnutls_certificate_type_set_priority (session, cert_type_priority);
++	gnutls_priority_set_direct(session, "NORMAL", NULL);
+ 	gnutls_credentials_set (session, GNUTLS_CRD_CERTIFICATE, xcred);
+ 	gnutls_transport_set_ptr (session, (gnutls_transport_ptr) GINT_TO_POINTER(sd));
+ 	ret = gnutls_handshake (session);

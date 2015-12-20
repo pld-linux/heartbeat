@@ -1,53 +1,6 @@
-diff -ru heartbeat-3.0.2-rc2.orig/lib/apphb/Makefile.am heartbeat-3.0.2-rc2/lib/apphb/Makefile.am
---- heartbeat-3.0.2-rc2.orig/lib/apphb/Makefile.am	2009-12-19 19:46:52.000000000 +0100
-+++ heartbeat-3.0.2-rc2/lib/apphb/Makefile.am	2011-04-27 16:03:17.553343763 +0200
-@@ -38,4 +38,4 @@
- libapphb_la_CFLAGS	= -lpthread
- endif
- 
--libapphb_la_LDFLAGS	= -version-info 2:0:0 
-+libapphb_la_LDFLAGS	= -version-info 2:0:0 -lglib-2.0 -lplumb
-diff -ru heartbeat-3.0.2-rc2.orig/lib/hbclient/Makefile.am heartbeat-3.0.2-rc2/lib/hbclient/Makefile.am
---- heartbeat-3.0.2-rc2.orig/lib/hbclient/Makefile.am	2011-04-27 15:59:06.973343764 +0200
-+++ heartbeat-3.0.2-rc2/lib/hbclient/Makefile.am	2011-04-27 16:03:17.553343763 +0200
-@@ -44,8 +44,8 @@
- lib_LTLIBRARIES		= libhbclient.la 
- 
- libhbclient_la_SOURCES	= client_lib.c
--libhbclient_la_LDFLAGS	= -version-info 1:0:0
--libhbclient_la_LIBADD	= $(top_builddir)/replace/libreplace.la  
-+libhbclient_la_LDFLAGS	= -version-info 1:0:0 -lplumb
-+libhbclient_la_LIBADD	= $(top_builddir)/replace/libreplace.la $(gliblib)
- 
- ## binary progs
- halib_PROGRAMS		= api_test
-diff -ru heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am heartbeat-3.0.2-rc2/membership/ccm/Makefile.am
---- heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am	2009-12-19 19:46:52.000000000 +0100
-+++ heartbeat-3.0.2-rc2/membership/ccm/Makefile.am	2011-04-27 16:07:02.910011000 +0200
-@@ -82,7 +82,7 @@
- 
- 
- libccmclient_la_SOURCES	= ccmlib_memapi.c ccmlib_eventapi.c ccmlib.h
--libccmclient_la_LDFLAGS	= -version-info 1:0:0
-+libccmclient_la_LDFLAGS	= -version-info 1:0:0 $(gliblib) -lplumb
- 
- 
- ## library libclm.la
-@@ -95,7 +95,10 @@
- 
- ## Add -DPOSIX_THREADS to CFLAGS to compile a thread-safe version library
- libclm_la_CFLAGS	= -g #-DPOSIX_THREADS
--libclm_la_LDFLAGS	= -version-info 1:0:0
-+libclm_la_LDFLAGS	= -version-info 1:0:0 \
-+			  -lplumb \
-+			  $(gliblib)
-+libclm_la_LIBADD		= libccmclient.la
- 
- clmtest_SOURCES		= clmtest.c
- clmtest_LDADD		= libclm.la libccmclient.la \
---- Heartbeat-3-0-STABLE-3.0.5/configure.in.orig	2013-09-06 19:02:36.552797324 +0200
-+++ Heartbeat-3-0-STABLE-3.0.5/configure.in	2013-09-06 21:47:09.149049676 +0200
-@@ -614,6 +614,7 @@
+--- Heartbeat-3-0-STABLE-3.0.6/configure.ac.orig	2015-12-19 16:20:41.745674168 +0100
++++ Heartbeat-3-0-STABLE-3.0.6/configure.ac	2015-12-19 16:47:03.728941113 +0100
+@@ -624,6 +624,7 @@
  fi
  AC_SUBST(DLOPEN_FORCE_FLAGS)
  
@@ -55,7 +8,7 @@ diff -ru heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am heartbeat-3.0.2-rc2
  dnl ************ uuid **********************
  AC_ARG_WITH(uuid,
      [  --with-uuid=UUID      mechanism for uuid {e2fsprogs|ossp|any|no}
-@@ -626,25 +627,26 @@
+@@ -636,25 +637,26 @@
    )
  case $uuidimpl in
  e2fsprogs)
@@ -85,7 +38,7 @@ diff -ru heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am heartbeat-3.0.2-rc2
  
  case "$host_os" in
  darwin*)	
-@@ -1854,7 +1854,7 @@
+@@ -1892,7 +1894,7 @@
  dnl	getopt: If this is valid, define HAVE_DECL_GETOPT to make the getopt.h header compile cleanly.
  dnl
  
@@ -94,7 +47,7 @@ diff -ru heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am heartbeat-3.0.2-rc2
  dnl AC_CHECK_FUNCS(alphasort inet_pton NoSuchFunctionName scandir setenv strerror unsetenv strnlen strndup daemon uuid_parse)
  
  AC_CHECK_FUNCS(getopt, 
-@@ -1951,7 +1953,7 @@
+@@ -1991,7 +1993,7 @@
  dnl check if header file and lib are there for zlib
  zlib_installed="yes"
  AC_CHECK_HEADERS(zlib.h, , [zlib_installed="no"],)
@@ -103,7 +56,7 @@ diff -ru heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am heartbeat-3.0.2-rc2
  AM_CONDITIONAL(BUILD_ZLIB_COMPRESS_MODULE, test "x${zlib_installed}" = "xyes")
  if test "x${zlib_installed}" = "xno"; then
  	FatalMissingThing "zlib" \
-@@ -1962,13 +1964,13 @@
+@@ -2002,7 +2004,7 @@
  dnl check if header file and lib are there for zlib
  bz2_installed="yes"
  AC_CHECK_HEADERS(bzlib.h, , [bz2_installed="no"],)
@@ -111,15 +64,8 @@ diff -ru heartbeat-3.0.2-rc2.orig/membership/ccm/Makefile.am heartbeat-3.0.2-rc2
 +AC_CHECK_LIB(bz2, BZ2_bzBuffToBuffCompress , [LIBBZ2=-lbz2], [bz2_installed="no"])
  AM_CONDITIONAL(BUILD_BZ2_COMPRESS_MODULE, test "x${bz2_installed}" = "xyes")
  
- dnl check if header file and lib are there for openais module
- openais_installed="yes"
- AC_CHECK_HEADERS(evs.h, , [openais_installed="no"],)
--AC_CHECK_LIB(evs, evs_initialize , , [openais_installed="no"])
-+AC_CHECK_LIB(evs, evs_initialize , [LIBEVS=-levs] , [openais_installed="no"])
- AM_CONDITIONAL(BUILD_OPENAIS_MODULE, test "x${openais_installed}" = "xyes")
- 
  dnl check if there are getpid() inconsistency
-@@ -2086,7 +2086,7 @@
+@@ -2118,7 +2120,7 @@
  	GNUTLSLIBS="`$LIBGNUTLS_CONFIG --libs`";
  	AC_MSG_RESULT($GNUTLSLIBS)
  else

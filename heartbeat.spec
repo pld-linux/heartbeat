@@ -1,49 +1,46 @@
 # TODO
-# - merge mibs supackage from 2.1 branch
+# - tipc?
+# - merge mibs subpackage from 2.1 branch
 # - cleanup deps, users for 3.x
 # - fixup deps, inner deps, think of subpackages, ugprade path from 2.1
-#
-# Conditional build:
-%bcond_with	openais	# OpenAIS (pre-corosync) support
 #
 Summary:	Heartbeat - subsystem for High-Availability Linux
 Summary(es.UTF-8):	Subsistema heartbeat para Linux "High-Availability"
 Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodności
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
-Version:	3.0.5
-Release:	8
+Version:	3.0.6
+Release:	1
 License:	GPL v2+
 Group:		Networking/Daemons
 Source0:	http://hg.linux-ha.org/heartbeat-STABLE_3_0/archive/STABLE-%{version}.tar.bz2
-# Source0-md5:	f8686abde8722c42265c6d84fbe3d3bf
+# Source0-md5:	8a5e1fc2b44750c052d1007226a84dbe
 Source1:	%{name}.init
-Source2:	%{name}.tmpfiles
-Patch0:		%{name}-type_mismatch.patch
-Patch1:		%{name}-ac.patch
-Patch2:		%{name}-libs.patch
-Patch3:		%{name}-tls.patch
-Patch4:		%{name}-ucast.patch
+Patch0:		%{name}-ac.patch
+Patch1:		%{name}-libs.patch
+Patch2:		%{name}-tls.patch
 URL:		http://www.linux-ha.org/Heartbeat
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
+BuildRequires:	bzip2-devel
 BuildRequires:	cluster-glue-libs-devel
 BuildRequires:	docbook-dtd44-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	glib2-devel >= 2.0
 BuildRequires:	glibc-misc
 BuildRequires:	gnutls-devel
+BuildRequires:	hbaapi-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel >= 5.4
-%{?with_openais:BuildRequires:	openais-devel}
 BuildRequires:	pkgconfig
 BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
+BuildRequires:	zlib-devel
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	cluster-glue
 Requires:	psmisc >= 22.5-2
@@ -136,8 +133,6 @@ Zestaw testów klastra opartego o heartbeat.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
 %{__libtoolize} --ltdl
@@ -146,8 +141,8 @@ Zestaw testów klastra opartego o heartbeat.
 %{__autoheader}
 %{__automake}
 %configure \
-	%{!?with_openais:ac_cv_header_evs_h=no} \
 	--with-initdir=/etc/rc.d/init.d \
+	--with-systemdunitdir=%{systemdunitdir} \
 	--docdir=%{_docdir}/%{name}-%{version} \
 	--enable-fatal-warnings=no \
 	--enable-mgmt \
@@ -161,7 +156,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} -j1 install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{/var/run/heartbeat,/usr/lib/tmpfiles.d}
+install -d $RPM_BUILD_ROOT/var/run/heartbeat/{crm,dopd}
 
 # plugins are lt_dlopened, but using *.so names, so *.la are not used
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/heartbeat/plugins/*/*.{la,a}
@@ -180,8 +175,6 @@ for tool in hb_addnode hb_delnode hb_standby hb_takeover; do
 done
 
 %{__rm} $RPM_BUILD_ROOT%{_datadir}/heartbeat/cts/README
-
-install %{SOURCE2} $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/%{name}.conf
 
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 
@@ -216,8 +209,6 @@ fi
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/HBauth/*.so
 %dir %{_libdir}/heartbeat/plugins/HBcomm
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/HBcomm/*.so
-%dir %{_libdir}/heartbeat/plugins/HBcompress
-%attr(755,root,root) %{_libdir}/heartbeat/plugins/HBcompress/*.so
 %dir %{_libdir}/heartbeat/plugins/quorum
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/quorum/*.so
 %dir %{_libdir}/heartbeat/plugins/quorumd
@@ -255,10 +246,13 @@ fi
 %attr(755,root,root) %{_sysconfdir}/ha.d/resource.d/*
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/heartbeat
 %attr(754,root,root) /etc/rc.d/init.d/heartbeat
+%{systemdunitdir}/heartbeat.service
 %dir /var/run/heartbeat
 %attr(750,hacluster,haclient) %dir /var/run/heartbeat/ccm
+%attr(750,hacluster,haclient) %dir /var/run/heartbeat/crm
+%attr(750,hacluster,haclient) %dir /var/run/heartbeat/dopd
 %dir /var/lib/heartbeat
-/usr/lib/tmpfiles.d/%{name}.conf
+%{systemdtmpfilesdir}/%{name}.conf
 %{_mandir}/man1/cl_status.1*
 %{_mandir}/man1/hb_addnode.1*
 %{_mandir}/man1/hb_delnode.1*
