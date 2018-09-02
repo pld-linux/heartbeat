@@ -9,7 +9,7 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	3.0.6
-Release:	2
+Release:	3
 License:	GPL v2+
 Group:		Networking/Daemons
 Source0:	http://hg.linux-ha.org/heartbeat-STABLE_3_0/archive/STABLE-%{version}.tar.bz2
@@ -216,19 +216,22 @@ fi
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/quorumd/*.so
 %dir %{_libdir}/heartbeat/plugins/tiebreaker
 %attr(755,root,root) %{_libdir}/heartbeat/plugins/tiebreaker/*.so
-%attr(755,root,root) %{_libdir}/heartbeat/api_test
-%attr(755,root,root) %{_libdir}/heartbeat/apphbd
-%attr(755,root,root) %{_libdir}/heartbeat/apphbtest
-%attr(755,root,root) %{_libdir}/heartbeat/ccm
-%attr(755,root,root) %{_libdir}/heartbeat/ccm_testclient
-%attr(755,root,root) %{_libdir}/heartbeat/clmtest
-%attr(755,root,root) %{_libdir}/heartbeat/dopd
-%attr(755,root,root) %{_libdir}/heartbeat/drbd-peer-outdater
-%attr(755,root,root) %{_libdir}/heartbeat/heartbeat
-%attr(755,root,root) %{_libdir}/heartbeat/ipfail
-%attr(755,root,root) %{_libdir}/heartbeat/mlock
-%attr(755,root,root) %{_libdir}/heartbeat/quorumd
-%attr(755,root,root) %{_libdir}/heartbeat/quorumdtest
+%if "%{_libexecdir}" != "%{_libdir}"
+%dir %{_libexecdir}/heartbeat
+%endif
+%attr(755,root,root) %{_libexecdir}/heartbeat/api_test
+%attr(755,root,root) %{_libexecdir}/heartbeat/apphbd
+%attr(755,root,root) %{_libexecdir}/heartbeat/apphbtest
+%attr(755,root,root) %{_libexecdir}/heartbeat/ccm
+%attr(755,root,root) %{_libexecdir}/heartbeat/ccm_testclient
+%attr(755,root,root) %{_libexecdir}/heartbeat/clmtest
+%attr(755,root,root) %{_libexecdir}/heartbeat/dopd
+%attr(755,root,root) %{_libexecdir}/heartbeat/drbd-peer-outdater
+%attr(755,root,root) %{_libexecdir}/heartbeat/heartbeat
+%attr(755,root,root) %{_libexecdir}/heartbeat/ipfail
+%attr(755,root,root) %{_libexecdir}/heartbeat/mlock
+%attr(755,root,root) %{_libexecdir}/heartbeat/quorumd
+%attr(755,root,root) %{_libexecdir}/heartbeat/quorumdtest
 %dir %{_datadir}/heartbeat
 %attr(755,root,root) %{_datadir}/heartbeat/BasicSanityCheck
 %attr(755,root,root) %{_datadir}/heartbeat/ResourceManager
