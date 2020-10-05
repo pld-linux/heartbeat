@@ -135,6 +135,11 @@ Zestaw testów klastra opartego o heartbeat.
 %patch2 -p1
 %patch3 -p1
 
+%{__sed} -i -e '1{
+	s,^#!.*python$,#!%{__python},
+}' \
+	heartbeat/{hb_api,ha_test}.py
+
 %build
 %{__libtoolize} --ltdl
 %{__aclocal}
@@ -142,6 +147,7 @@ Zestaw testów klastra opartego o heartbeat.
 %{__autoheader}
 %{__automake}
 %configure \
+	PYTHON=%{__python} \
 	--with-initdir=/etc/rc.d/init.d \
 	--with-systemdunitdir=%{systemdunitdir} \
 	--docdir=%{_docdir}/%{name}-%{version} \
