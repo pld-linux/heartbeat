@@ -9,7 +9,7 @@ Summary(pl.UTF-8):	Podsystem heartbeat dla systemów o podwyższonej niezawodno�
 Summary(pt_BR.UTF-8):	Implementa sistema de monitoração (heartbeats) visando Alta Disponibilidade
 Name:		heartbeat
 Version:	3.0.6
-Release:	4
+Release:	5
 License:	GPL v2+
 Group:		Networking/Daemons
 Source0:	http://hg.linux-ha.org/heartbeat-STABLE_3_0/archive/STABLE-%{version}.tar.bz2
@@ -36,8 +36,8 @@ BuildRequires:	libuuid-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel >= 5.4
 BuildRequires:	pkgconfig
-BuildRequires:	python
-BuildRequires:	python-devel
+BuildRequires:	python3
+BuildRequires:	python3-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	zlib-devel
@@ -136,7 +136,7 @@ Zestaw testów klastra opartego o heartbeat.
 %patch3 -p1
 
 %{__sed} -i -e '1{
-	s,^#!.*python$,#!%{__python},
+	s,^#!.*python$,#!%{__python3},
 }' \
 	heartbeat/{hb_api,ha_test}.py
 
@@ -147,7 +147,7 @@ Zestaw testów klastra opartego o heartbeat.
 %{__autoheader}
 %{__automake}
 %configure \
-	PYTHON=%{__python} \
+	PYTHON=%{__python3} \
 	--with-initdir=/etc/rc.d/init.d \
 	--with-systemdunitdir=%{systemdunitdir} \
 	--docdir=%{_docdir}/%{name}-%{version} \
@@ -313,6 +313,6 @@ fi
 %doc cts/README
 %dir %{_datadir}/heartbeat/cts
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*.py
-%{_datadir}/heartbeat/cts/*.py[co]
+%{_datadir}/heartbeat/cts/__pycache__/*.py[co]
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*.sh
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*Dummy

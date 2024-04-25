@@ -1,6 +1,7 @@
---- heartbeat-3.0.6/configure.ac.orig	Tue Feb 17 06:50:30 2004
-+++ heartbeat-3.0.6/configure.ac	Tue Mar 16 13:36:09 2004
-@@ -258,18 +258,7 @@
+diff -urNp -x '*.orig' Heartbeat-3-0-STABLE-3.0.6.org/configure.ac Heartbeat-3-0-STABLE-3.0.6/configure.ac
+--- Heartbeat-3-0-STABLE-3.0.6.org/configure.ac	2015-02-04 15:57:04.000000000 +0100
++++ Heartbeat-3-0-STABLE-3.0.6/configure.ac	2024-04-25 23:59:40.319018426 +0200
+@@ -777,18 +777,7 @@ fi
  dnl Determine if we use -w1 or -t1 for ping (in PYTHON Scripts)
  
  
@@ -19,8 +20,8 @@
 +PING_TIMEOUT_OPT="-w1"
  AC_SUBST(PING_TIMEOUT_OPT)
  
- dnl Determining a route (particularly for "findif").
-@@ -816,17 +816,7 @@
+ 
+@@ -806,17 +795,7 @@ AC_DEFINE(PROCROUTE, "/proc/net/route",
  
  
  AC_MSG_CHECKING(ifconfig option to list interfaces)
@@ -39,9 +40,7 @@
  
  AC_SUBST(IFCONFIG_A_OPT)
  AC_SUBST(WHOAMI)
---- heartbeat-3.0.6/configure.ac.orig	2006-08-08 14:41:54.000000000 +0200
-+++ heartbeat-3.0.6/configure.ac	2007-01-27 19:23:30.919741000 +0100
-@@ -1693,8 +1693,12 @@ dnl ************ printw ****************
+@@ -1585,8 +1564,12 @@ dnl ************ printw ****************
  	      [
  #if defined(HAVE_CURSES_H)
  #  include <curses.h>
