@@ -313,6 +313,6 @@ fi
 %doc cts/README
 %dir %{_datadir}/heartbeat/cts
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*.py
-%{_datadir}/heartbeat/cts/__pycache__/*.py[co]
+%{_datadir}/heartbeat/cts/__pycache__
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*.sh
 %attr(755,root,root) %{_datadir}/heartbeat/cts/*Dummy
